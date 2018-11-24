@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
+    <img src="./assets/logo.png" width=100 align=right>
     <router-view/>
   </div>
 </template>
@@ -8,6 +8,7 @@
 import DonorCard from './components/DonorCard'
 import HelloWorld from './components/HelloWorld'
 import DonationCard from './components/DonationCard'
+
 export default {
   name: 'App',
   components: {

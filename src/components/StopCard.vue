@@ -1,27 +1,28 @@
 <template>
-<div class="card" draggable="true">
-<b class="items"> </b> {{don.inputtime}}<p/>
+<div class="card">
+
+<b class="items"> </b> {{stop.inputtime}}<p/>
 <i class="address"></i><p/>
-<u class="phone"> {{don.donor.phone}}</u>
-<input type="button" class="hidebtn" value="Hide Donation">
-<input type="button" class="delbtn" value="Delete Donation">
+<u class="phone"> {{stop.donor.phone}}</u><p/>
+<input type="button" class="hidebtn" value="Hide Stop">
+<input type="button" class="delbtn" value="Cancel Stop">
+
 </div>
 </template>
 
 <script>
+var dataURL = "/home/v/myapp/src/components/dons.json"
+
 export default {
-  name: 'DonorCard',
+  name: 'StopCard',
+  props: { stop: {
+    type: Object,
+    required: true
+  }
+  },
   data () {
     return {
-      don: {inputtime: 1234,
-        scheduleddate: 12345,
-        status: 'Unmarked',
-        items: 'None',
-        donor: {firstname: 'Test',
-          lastname: 'Testerson',
-          address: '215 test ct',
-          phone: '12345',
-          email: 'test'}}
+      stop: stop
     }
   }
 }

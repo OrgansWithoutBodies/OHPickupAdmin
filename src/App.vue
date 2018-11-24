@@ -7,14 +7,14 @@
 <script>
 import DonorCard from './components/DonorCard'
 import HelloWorld from './components/HelloWorld'
-import DonationCard from './components/DonationCard'
+import StopCard from './components/StopCard'
 
 export default {
   name: 'App',
   components: {
     HelloWorld,
     DonorCard,
-    DonationCard
+    StopCard
   }
 }
 </script>

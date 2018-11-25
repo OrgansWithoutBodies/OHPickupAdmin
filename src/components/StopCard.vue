@@ -1,9 +1,24 @@
 <template>
 <div class="card">
 
-<b class="items"> </b> {{stop.inputtime}}<p/>
-<i class="address"></i><p/>
+<u class="donor"> {{stop.donor.firstname}}, {{stop.donor.lastname}}</u><p/>
+<b class="items"> </b> {{stop.items}}<p/>
+<div class="donorinfo">
+<i class="address">{{stop.donor.address}}</i><p/>
 <u class="phone"> {{stop.donor.phone}}</u><p/>
+</div><p/>
+
+<b class="status">{{stop.status}}</b>
+<input type="button" value="Mark Called" class="called"><p/>
+
+<div class="responsediv">
+<select id="response">
+<option value=""> Please Select Response Below </option>
+<option value="confirmed">Confirmed </option>
+<option value="noans">No Answer</option>
+</select>
+<button>Save Response</button><p/>
+</div>
 <input type="button" class="hidebtn" value="Hide Stop">
 <input type="button" class="delbtn" value="Cancel Stop">
 
@@ -50,10 +65,19 @@ border-radius: 5px;
   height:10px;
   color:#ff0000;
 }
+.donorinfo{
+  display:inline-block;
+  padding:10px 50px;
+  background-color:#cdcdcd;
+  border-radius:8px;
+}
 .hidebtn{
   background-color:#f2ed4e;
 }
 .delbtn{
   background-color:#ff0000;
+}
+.responsediv{
+  display:none;
 }
 </style>

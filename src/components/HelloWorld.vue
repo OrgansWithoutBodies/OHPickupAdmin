@@ -9,19 +9,38 @@
    </div>
    </div>
    <button> ... </button><p/>
-    <div v-for="stop in stops">
-      <draggable v-model="stoplist">
-       <stop-card v-bind:stop="stop"/>
-      </draggable>
+   <draggable v-model="stoplist" @start="drag=true" @end="drag=false">
+    <div v-for="stop in stops" :key="stop.inputtime">
+         <stop-card v-bind:stop="stop"/>
     </div>
+    </draggable>
     <button @click="addDonor"> Add New Stop </button>
     <button> Show Hidden Stops</button><p/>
     <button> Save Stops for this Trip</button><p/>
-    <modal name="AddNewStop" adaptive="true">
+    <button @click='showSettings'> Show Settings Menu </button>
+
+
+
+
+    <modal name="AddNewStop" adaptive="true" height="auto" scrollable="true">
     <AddNewStop/>
+    </modal>
+
+    <modal name="ShowSettings" adaptive="true">
+    <Settings/>
+    </modal>
+
+    <modal name="CancelWarning" adaptive="true">
+    <h1>Warning</h1>: This will permanently delete information related to this stop. If you Hide the stop instead then all data will remain in database.
+    <button @click='hideWarning'>Keep Stop</button>
+
+    <button @click='heedWarning'>Cancel Stop</button>
     </modal>
   </div>
 </template>
+
+
+
 
 <script>
 //https://github.com/SortableJS/Vue.Draggablehttps://github.com/SortableJS/Vue.Draggable
@@ -29,6 +48,7 @@ const maxpertrip = 6
 import DonorCard from './DonorCard'
 import StopCard from './StopCard'
 import AddNewStop from './AddNewStop'
+import Settings from './Settings'
 import draggable from 'vuedraggable'
 export default {
   name: 'HelloWorld',
@@ -36,6 +56,7 @@ export default {
     StopCard,
     DonorCard,
     AddNewStop,
+    Settings,
     draggable
   },
   data (){return{triplen:Array.apply(null, {length: maxpertrip}).map(Number.call, Number)}},
@@ -54,6 +75,9 @@ export default {
     this.$modal.show('AddNewStop')
 
   },
+  showSettings:function(evt){
+  this.$modal.show('ShowSettings')
+  },
   onEnd:function(evt){
 
   },
@@ -64,6 +88,9 @@ export default {
 }
 
 </script>
+
+
+
 
 <style scoped>
 h1, h2 {
@@ -121,4 +148,5 @@ a {
 @todo modal popup on cancel stop
 @todo next/last date view
 @todo choose between multiple different views
+@todo more settings
 -->

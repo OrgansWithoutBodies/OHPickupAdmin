@@ -2,28 +2,41 @@
 <div>
 <h1 class="title">Add New Stop </h1>
 <form>
-<div v-if="loc">{{loc}}</div>
+<div id="window" v-if="loc">{{loc}}</div>
+<div class="fieldheader">
 Description of Items:
-<textarea rows="4" cols="50" class="Itemdesc"/></p>
-
-Donor has donated before:<button id="oldDonor" @click="toggleDon">toggle</button></p>
+</div>
+<div class="fielditem">
+<textarea rows="4" cols="50" class="Itemdesc"/></div></p>
+<div class="fieldheader">
+Donor has donated before:
+<div class="fielditem"><button id="oldDonor" @click="toggleDon">toggle</button></div></div></p>
 <div id="oldDonMenu" style="display:none;">
-	Lookup Donor by:<p/>
-		Phone: <input type="tel"><p/>
-		Email: <input type="email">
+
+	<h3>Lookup Donor by:</h3><p/>
+
+<div class="fieldheader">
+		Phone: </div>
+<div class="fielditem"><input type="tel" placeholder="phone #"></div><p/>
+		
+<div class="fieldheader">
+		Email: </div>
+<div class="fielditem"><input type="email" placeholder="email address"></div><p/>
 <!--
 Is this {{searcheddonor}}?
 <button>yes</button> <button>no</button><p/>	-->
 </div>
 
 <div id="newDonMenu" style="display:block;">
-	Donor Name:<input type='text' placeholder="First Name"> <input type='text' placeholder="Last Name"></p>
-	Donor Phone:<input type='tel' placeholder="Phone Number"></p>
-	Donor Email:<input type='email' placeholder="Email"></p>
+	<h3>Add New Donor</h3>
+	<div class="fieldheader">
+	Donor Name:</div><div class="fielditem"><input type='text' placeholder="First Name"> <input type='text' placeholder="Last Name"></div></p>
+	<div class="fieldheader">
+	Donor Phone:</div><div class="fielditem"><input type='tel' placeholder="Phone Number"></div></p>
+	<div class="fieldheader">
+	Donor Email:</div><div class="fielditem"><input type='email' placeholder="Email"></div></p>
 </div>
 </form>
-<button>Save</button>
-<button>Cancel</button>
 </div>
 </template>
 <script>
@@ -34,7 +47,7 @@ export default{  props: { trip: {
   },
   data () {
     return {
-      loc: [trip,pos],
+      pos:pos,
       oldDon:false}},
   methods:{toggleDon:function(){
   	var olddiv=document.getElementById("oldDonMenu");
@@ -51,9 +64,20 @@ export default{  props: { trip: {
 	}
 </script>
 
-<style>
+<style scoped>
+.window{
+	margin:50px;
+}
+.fieldheader{
+	margin-left:20px;
+}
+.fielditem{
+	margin-left:40px;
+}
 #oldDonMenu,#newDonMenu{
 	background-color:#eeeeee;
+	margin-left:10px;
+	padding:10px;
 
 }
 </style>

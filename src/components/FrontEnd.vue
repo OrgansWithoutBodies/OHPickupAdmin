@@ -1,41 +1,41 @@
 <template>
   <div class="test">
-  <select><option v-for="trip in trips">{{trip.date}}</option></select> <button>+</button>
+  <div class="tripcontrol">
+    <button>◀</button>
+    <select v-model="selectedday"><option v-bind:value="trip.date" v-for="trip in trips">{{trip.date}}</option></select>
+    <button>▶</button>  
+    <button>+</button>
+  </div>
+  <trip-card v-bind:trip="trips[1]" @slotdbl="addStop"/>
 
-    <div v-for="trip in trips" class="trip">
-    <b class="tripdate">{{trip.date}}</b><p/> 
-    <div v-for="slot in triplen" class="tripgrid">
-      <div v-bind:id="slot" class="tripslot" @dblclick="addDonor"/>
-   </div>
-   </div>
    <button> ... </button><p/>
    <draggable v-model="stoplist" @start="drag=true" @end="drag=false">
     <div v-for="stop in stops" :key="stop.inputtime">
          <stop-card v-bind:stop="stop"/>
     </div>
     </draggable>
-    <button @click="addDonor"> Add New Stop </button>
-    <button> Show Hidden Stops</button><p/>
-    <button> Save Stops for this Trip</button><p/>
-    <button @click='showSettings'> Show Settings Menu </button>
+      <button @click="addStop"> Add New Stop </button>
+      <button> Show Hidden Stops</button><p/>
+      <button> Save Stops for this Trip</button><p/>
+      <button @click='showSettings'> Show Settings Menu </button>
+      <button> About </button>
 
-
-
-
-    <modal name="AddNewStop" adaptive="true" height="auto" scrollable="true">
-    <AddNewStop/>
+    <modal name="AddNewStop" adaptive="true" height="auto" scrollable="true" class="newstopwindow">
+    <div id="spacing">
+      <AddNewStop/>
+      <br>
+      <button>Save</button>
+      <button>Cancel</button>
+    </div>
     </modal>
 
     <modal name="ShowSettings" adaptive="true">
-    <Settings/>
+    <div id="spacing">
+      <Settings/>
+    </div>
     </modal>
 
-    <modal name="CancelWarning" adaptive="true">
-    <h1>Warning</h1>: This will permanently delete information related to this stop. If you Hide the stop instead then all data will remain in database.
-    <button @click='hideWarning'>Keep Stop</button>
-
-    <button @click='heedWarning'>Cancel Stop</button>
-    </modal>
+   
   </div>
 </template>
 
@@ -46,33 +46,41 @@
 //https://github.com/SortableJS/Vue.Draggablehttps://github.com/SortableJS/Vue.Draggable
 const maxpertrip = 6
 import DonorCard from './DonorCard'
+import TripCard from './TripCard'
 import StopCard from './StopCard'
 import AddNewStop from './AddNewStop'
 import Settings from './Settings'
+
 import draggable from 'vuedraggable'
 export default {
-  name: 'HelloWorld',
+  name: 'FrontEnd',
   components: {
     StopCard,
     DonorCard,
+    TripCard,
     AddNewStop,
     Settings,
     draggable
   },
-  data (){return{triplen:Array.apply(null, {length: maxpertrip}).map(Number.call, Number)}},
   computed:{
+    donors () {
+        return this.$store.state.donors
+      },
+    selectedday (){return "11/13/2018"},
     stoplist:{get(){return this.$store.state.stops},set(value){this.$store.commit('updateList',value)} },
     stops () {
       return this.$store.state.stops
     },
+    triplen () { return Array.apply(null, {length: maxpertrip}).map(Number.call, Number)},
     trips () {
       return this.$store.state.trips
     }
   },
   methods:{
-
-  addDonor:function(evt){
-    this.$modal.show('AddNewStop')
+  testfn:function(evt){
+  },
+  addStop:function(pos){
+    this.$modal.show('AddNewStop',{pos:pos})
 
   },
   showSettings:function(evt){
@@ -92,7 +100,7 @@ export default {
 
 
 
-<style scoped>
+<style>
 h1, h2 {
   font-weight: normal;
 }
@@ -107,37 +115,15 @@ li {
 a {
   color: #42b983;
 }
+.newstopwindow{
+  
+}
+#spacing{
+padding:20px;
+border-radius:10px;
+}
 
 
-
-
-.tripslot{
-  display:grid;
-  width:50px;
-  height:50px;
-  border:4px solid black;
-  margin:10px;
-  display:inline-block;
-  background-color:#ff0000;
-  border-radius:5px;
-}
-.tripdate{
-  font-size:30px;
-  text-decoration:underline;
-  text-transform:capitalize;
-  text-shadow: 2px 3px 10px silver;
-  color:#ff0000;
-}
-.tripgrid{
-  //display:inline-grid;
-  //grid-template-columns: repeat(3, auto [col-start]);
-}
-.trip{
-  background-color:#eeeeee;
-  width:1000px;
-  margin:5px;
-  border-radius:20px;
-}
 </style>
 
 <!--@todo rolodex style donorcard- loc based on lastname
@@ -149,4 +135,14 @@ a {
 @todo next/last date view
 @todo choose between multiple different views
 @todo more settings
+@todo disentangle donor/link id in store/script to do it automatically
+@todo automatically search when complete email/phone is entered instead of separate window
+@todo path between slots? 
+@todo get donorinfo working
+@todo figure out how to reliably pass loc in addnew modal
+
+PACKAGES USED:
+vuex:
+vuedraggable:https://github.com/SortableJS/Vue.Draggable
+vue-js-modal:https://github.com/euvl/vue-js-modal
 -->

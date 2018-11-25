@@ -3,6 +3,7 @@
 <b class = "name"> {{donor.lastname}}, {{donor.firstname}}</b> <p/>
 <i class = "address"> {{donor.address}}</i><p/>
 <u class = "phone"> {{donor.phone}}</u>
+<i>Number of Donations from this donor</i>
 </div>
 </template>
 
@@ -15,6 +16,7 @@ export default {
   }},
   data () {
     return {
+
       donor: donor
     }
   }

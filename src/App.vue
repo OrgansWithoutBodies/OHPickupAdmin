@@ -1,21 +1,18 @@
+
 <template>
   <div id="app">
-    <img src="./assets/logo.png" width=100 align=right>
     <router-view/>
   </div>
 </template>
 <script>
-import DonorCard from './components/DonorCard'
-import HelloWorld from './components/HelloWorld'
-import StopCard from './components/StopCard'
+import FrontEnd from './components/FrontEnd'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld,
-    DonorCard,
-    StopCard
-  }
+    FrontEnd
+  },
+  data:{version:"0.0.2"}
 }
 </script>
 <style>

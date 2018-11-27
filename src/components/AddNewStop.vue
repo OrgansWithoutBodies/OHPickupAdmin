@@ -7,7 +7,7 @@
 Description of Items:
 </div>
 <div class="fielditem">
-<textarea rows="4" cols="50" class="Itemdesc"/></div></p>
+<textarea rows="4" cols="50" id="Itemdesc"/></div></p>
 <div class="fieldheader">
 Donor has donated before:
 <div class="fielditem"><button id="oldDonor" @click="toggleDon">toggle</button></div></div></p>
@@ -30,12 +30,19 @@ Is this {{searcheddonor}}?
 <div id="newDonMenu" style="display:block;">
 	<h3>Add New Donor</h3>
 	<div class="fieldheader">
-	Donor Name:</div><div class="fielditem"><input type='text' placeholder="First Name"> <input type='text' placeholder="Last Name"></div></p>
+	Donor Name:</div><div class="fielditem"><input type='text' placeholder="First Name" id="FirstName"> <input type='text' placeholder="Last Name" id="LastName"></div></p>
 	<div class="fieldheader">
-	Donor Phone:</div><div class="fielditem"><input type='tel' placeholder="Phone Number"></div></p>
+	Donor Address:</div><div class="fielditem"><input type='text' placeholder="Address" id="Address"></div></p>
 	<div class="fieldheader">
-	Donor Email:</div><div class="fielditem"><input type='email' placeholder="Email"></div></p>
+	Donor Phone:</div><div class="fielditem"><input type='tel' placeholder="Phone Number" id="Phone"></div></p>
+	<div class="fieldheader">
+	Donor Email:</div><div class="fielditem"><input type='email' placeholder="Email" id="Email"></div></p>
+	<div class="fieldheader">
+	Other Info:</div><div class="fielditem"><textarea rows="4"  cols="40" id="Other" placeholder="Special Instructions for contacting this donor"/></div>
 </div>
+<br>
+<button @click="validateDonor">Save</button>
+<button>Cancel</button>
 </form>
 </div>
 </template>
@@ -60,8 +67,30 @@ export default{  props: { trip: {
 	else{
 		olddiv.style.display="none";	
 		newdiv.style.display="block";
-		}}}
+		}},
+
+  validateDonor(){
+	  var firstname=document.getElementById("FirstName")
+	  var lastname=document.getElementById("LastName")
+	  var phone=document.getElementById("Phone")
+	  var address=document.getElementById("Address")
+	  var email=document.getElementById("Email")
+	  var other=document.getElementById("Other")
+	  var donordict={firstname: firstname.value,
+		    lastname: lastname.value,
+		    address: address.value,
+		    phone: phone.value,
+		    email: email.value,
+		    other:other.value}
+
+	  var items=document.getElementById("Itemdesc")
+	  //@todo check if in db
+	  //@todo validate address format w OSV/GM
+
+
+  }}
 	}
+
 </script>
 
 <style scoped>

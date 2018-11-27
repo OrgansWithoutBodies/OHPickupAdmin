@@ -12,6 +12,14 @@
 	<input type="radio" id="docker"  class="backrad" value="Docker" v-model="backend" @click=showDockerMenu >
 	<label for="rest">Docker Container</label>
 	</div>
+
+	<b class="settingsheader">Map API Backend:</b><br/>
+	<input type="radio" value="GM" class="backrad">Google Maps<br/>
+	<input type="radio" value="OSV" class="backrad">Open Street View
+	
+
+
+
 	<modal name="REST">
 
 	<div id="spacing">

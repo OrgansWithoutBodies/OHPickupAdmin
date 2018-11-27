@@ -1,5 +1,5 @@
 <template>
-<div class="trip">
+<div class="trip">  
     <b class="tripdate">{{trip.date}}</b><p/> 
     <div v-for="slot in triplen" class="tripgrid">
       <div  v-bind:id="slot" class="tripslot empty" @dblclick="slotdbl" @click.shift="toggleFilled">

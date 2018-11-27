@@ -24,13 +24,10 @@
     <modal name="AddNewStop" adaptive="true" height="auto" scrollable="true" class="newstopwindow">
     <div id="spacing">
       <AddNewStop/>
-      <br>
-      <button>Save</button>
-      <button>Cancel</button>
     </div>
     </modal>
 
-    <modal name="ShowSettings" adaptive="true">
+    <modal name="ShowSettings" adaptive="true" height="auto">
     <div id="spacing">
       <Settings/>
     </div>
@@ -142,10 +139,11 @@ border-radius:10px;
 @todo more settings
 @todo disentangle donor/link id in store/script to do it automatically
 @todo automatically search when complete email/phone is entered instead of separate window
-@todo path between slots? 
+@todo dotted path between slots? 
 @todo get donorinfo working
-@todo figure out how to reliably pass loc in addnew modal
-
+@todo get LR buttons working/keyboarded?
+@todo spinner promises on loads
+@todo help screen on no data returned
 PACKAGES USED:
 vuex:
 vuedraggable:https://github.com/SortableJS/Vue.Draggable

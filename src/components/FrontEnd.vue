@@ -1,12 +1,13 @@
 <template>
-  <div class="test">
+  <div class="test"> test
   <div class="tripcontrol">
     <button>◀</button>
     <select v-model="selectedday"><option v-bind:value="trip.date" v-for="trip in trips">{{trip.date}}</option></select>
     <button>▶</button>  
     <button>+</button>
   </div>
-  <trip-card v-bind:trip="trips[1]" @slotdbl="addStop"/>
+  
+  <trip-card  v-bind:trip="trips[0]" @slotdbl="addStop"/>
 
    <button> ... </button><p/>
    <draggable v-model="stoplist" @start="drag=true" @end="drag=false">
@@ -54,6 +55,9 @@ import Settings from './Settings'
 import draggable from 'vuedraggable'
 export default {
   name: 'FrontEnd',
+  mounted(){
+      this.$store.dispatch('loadDataFrom')
+    },
   components: {
     StopCard,
     DonorCard,
@@ -63,17 +67,18 @@ export default {
     draggable
   },
   computed:{
+
     donors () {
-        return this.$store.state.donors
+        return this.$store.state.data.donors
       },
     selectedday (){return "11/13/2018"},
-    stoplist:{get(){return this.$store.state.stops},set(value){this.$store.commit('updateList',value)} },
+    stoplist:{get(){return this.$store.state.data.stops},set(value){this.$store.commit('updateList',value)} },
     stops () {
-      return this.$store.state.stops
+      return this.$store.state.data.stops
     },
     triplen () { return Array.apply(null, {length: maxpertrip}).map(Number.call, Number)},
     trips () {
-      return this.$store.state.trips
+      return this.$store.state.data.trips
     }
   },
   methods:{

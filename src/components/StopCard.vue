@@ -2,7 +2,7 @@
 <div class="card">
 
 <button class="donor" @click="toggleDon" v-bind:id="stop.inputtime"> {{stop.donor.firstname}}, {{stop.donor.lastname}}</button><p/>
-<div class="donorinfo" id="donorinfo " v-bind:id="stop.inputtime" style="display:inline-block;">
+<div class="donorinfo" id="donorinfo "  style="display:inline-block;">
 <i class="address">{{stop.donor.address}}</i><p/>
 <u class="phone"> {{stop.donor.phone}}</u><p/>
 </div><p/>
@@ -34,7 +34,6 @@
 </template>
 
 <script>
-var dataURL = "/home/v/myapp/src/components/dons.json"
 
 export default {
   name: 'StopCard',
@@ -54,7 +53,6 @@ export default {
     const id=evt.target.id
 
     var dondiv=document.getElementById("donorinfo "+id)
-    alert("donorinfo "+id)
 
     if (dondiv.style.display=="none"){
       dondiv.style.display="inline-block";

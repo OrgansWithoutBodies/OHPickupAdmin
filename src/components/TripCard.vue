@@ -1,6 +1,5 @@
 <template>
 <div class="trip">
-
     <b class="tripdate">{{trip.date}}</b><p/> 
     <div v-for="slot in triplen" class="tripgrid">
       <div  v-bind:id="slot" class="tripslot empty" @dblclick="slotdbl" @click.shift="toggleFilled">
@@ -11,8 +10,6 @@
 </template>
 
 <script>
-var dataURL = "/home/v/myapp/src/components/dons.json"
-
 export default {
   name: 'TripCard',
   props: { trip: {
@@ -22,8 +19,7 @@ export default {
   },
   data () {
     return {
-      triplen () { return Array.apply(null, {length: triplen}).map(Number.call, Number)},
-      trip: trip
+ 
     }
   },
   methods:{

@@ -39,5 +39,6 @@ def blankPage():
 	page.show()
 
 def writePickups(tripdict):
+	
 	pass
 blankPage()

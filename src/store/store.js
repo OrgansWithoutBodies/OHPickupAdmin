@@ -8,10 +8,12 @@ import VueAxios from 'vue-axios'
 Vue.use(Vuex) // only required if you're using modules.
               // We're using modules, so there you go.
 Vue.use(VueAxios, axios)
-const endpoint = " http://localhost:3003/data"
+const endpoint = " http://localhost:3000/"
+const dataep = endpoint+'db'
 const store = new Vuex.Store({
   highlightedtrip:"11/13/2018",
-  endpoint:"http://localhost:3003/data",
+  dbbackend:"REST",
+  endpoint:endpoint,
   mapbackend:"GM",
   state: {
     data: {"trips":[],
@@ -20,43 +22,66 @@ const store = new Vuex.Store({
     "stops":[]}
   },
   mutations: {
+    'ADD_EMPLOYEE'(state,emp){
+      state.employees.push(emp)
+    },
+    'ADD_DONOR'(state,donor){
+      state.donors.push(donor)
+    },
     'ADD_STOP' (state, stop) {
       state.stops.push(stop)
     },
     'ADD_TRIP'(state,trip){
       state.trips.push(trip)
     },
-    'ADD_STOP_TO_TRIP'(state,stop,tripid){
-      stop.tripid = tripid
+    'NEST_TRIP_IN_STOP'(state,stop,tripid){
+      stop.trip=state.trips.find(x=>x.id === tripid)
     },
-
+    'NEST_DONOR_IN_STOP'(state,stop,donorid){
+      stop.donor=state.donors.find(x=>x.id === donorid)
+    },
+    'NEST_EMPLOYEE_IN_TRIP'(){},
+    'NEST_EMPLOYEE_IN_TRIP'(){},
+    'NEST_EMPLOYEE_IN_TRIP'(){},
     'SET_DATA'(state,data){
       state.data=data
-    }
+    },
 
   },
   actions: {
     addStop (store, stop) {
-      store.commit('ADD_STOP', todo)
+
+      axios.post(endpoint+'/stops',stop)
+      .then(_ => {commit('ADD_STOP', stop)
+      })
+      .then(response => {})
+      .catch(e => {
+    
+      })
     },
 
   loadDataFrom({commit},format="REST")  {
     
     if(format=="REST"){
-      axios.get(endpoint)
+      axios.get(dataep)
         .then(r => r.data)
         .then(data => {
            commit('SET_DATA',data)
-        })
-    }
-  },
-  updateData({commit},format="REST"){
+                      })
+      }
+    },
+        
+
+    
+    
+  
+  postData({commit},data,format="REST"){
     if(format=="REST"){
       //@todo include authentication
-      axios.post(endpoint) 
+      //axios.post(endpoint,{""}) 
     }
   }
-}}
-)
+}})
+
 
 export default store

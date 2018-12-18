@@ -2,18 +2,27 @@
 <div>
 <h1 class="title">Add New Stop </h1>
 <form>
+
+
 <div id="window" v-if="loc">{{loc}}</div>
 <div class="fieldheader">
 Description of Items:
 </div>
 <div class="fielditem">
-<textarea rows="4" cols="50" id="Itemdesc"/></div></p>
+<textarea rows="4" cols="50" id="Itemdesc" v-model='newstop.items'/></div></p>
 <div class="fieldheader">
 Donor has donated before:
 <div class="fielditem"><button id="oldDonor" @click="toggleDon">toggle</button></div></div></p>
 <div id="oldDonMenu" style="display:none;">
 
 	<h3>Lookup Donor by:</h3><p/>
+Name:
+<div id="donorselect">
+<select v-model='newstop.donorid'>
+<option v-for="don in donors" v-bind:value="don.id">{{don.lastname}}, {{don.firstname}} - {{don.phone}}</option>
+</select>
+<div id="addnewdon" v-on:click="testfn">+</div>
+</div>
 
 <div class="fieldheader">
 		Phone: </div>
@@ -28,17 +37,7 @@ Is this {{searcheddonor}}?
 </div>
 
 <div id="newDonMenu" style="display:block;">
-	<h3>Add New Donor</h3>
-	<div class="fieldheader">
-	Donor Name:</div><div class="fielditem"><input type='text' placeholder="First Name" id="FirstName"> <input type='text' placeholder="Last Name" id="LastName"></div></p>
-	<div class="fieldheader">
-	Donor Address:</div><div class="fielditem"><input type='text' placeholder="Address" id="Address"></div></p>
-	<div class="fieldheader">
-	Donor Phone:</div><div class="fielditem"><input type='tel' placeholder="Phone Number" id="Phone"></div></p>
-	<div class="fieldheader">
-	Donor Email:</div><div class="fielditem"><input type='email' placeholder="Email" id="Email"></div></p>
-	<div class="fieldheader">
-	Other Info:</div><div class="fielditem"><textarea rows="4"  cols="40" id="Other" placeholder="Special Instructions for contacting this donor"/></div>
+	<new-donor-form/>
 </div>
 <br>
 <button @click="validateDonor">Save</button>
@@ -46,49 +45,80 @@ Is this {{searcheddonor}}?
 </form>
 </div>
 </template>
+
 <script>
-export default{  props: { trip: {
-    type: Object,
-    required: false
-  },pos:{type:Object,required:false}
-  },
+import newDonorForm from './formComponents/newDonorForm.vue';
+export default{  
+	props: { 
+		trip: {
+		    type: Object,
+		    required: false
+	  		},	
+		  trippos:{type:Object,required:false}
+		},
+  components:{'new-donor-form':newDonorForm,},
+  computed:{
+    donors () {
+        return this.$store.state.data.donors
+      },
+    },
   data () {
     return {
-      pos:pos,
-      oldDon:false}},
-  methods:{toggleDon:function(){
-  	var olddiv=document.getElementById("oldDonMenu");
-  	var newdiv=document.getElementById("newDonMenu")
+    
+      oldDon:false,
+      newstop:{items:'',donorid:''},
+      }},
 
-  	if (olddiv.style.display=="none"){
-  		olddiv.style.display="block";
-  		newdiv.style.display="none";
-  		}
-	else{
-		olddiv.style.display="none";	
-		newdiv.style.display="block";
-		}},
+  methods:{
+  	  testfn:function(){
+  	  	alert('test')
+  	  },
+	  commitStop:function(stop){
+	  	alert(stop);
+	    this.$store.dispatch(this.$store,stop);
+	  },
+	  toggleDon:function(){
+	  	var olddiv=document.getElementById("oldDonMenu");
+	  	var newdiv=document.getElementById("newDonMenu")
 
-  validateDonor(){
-	  var firstname=document.getElementById("FirstName")
-	  var lastname=document.getElementById("LastName")
-	  var phone=document.getElementById("Phone")
-	  var address=document.getElementById("Address")
-	  var email=document.getElementById("Email")
-	  var other=document.getElementById("Other")
-	  var donordict={firstname: firstname.value,
-		    lastname: lastname.value,
-		    address: address.value,
-		    phone: phone.value,
-		    email: email.value,
-		    other:other.value}
+	  	if (olddiv.style.display=="none"){
+	  		olddiv.style.display="block";
+	  		newdiv.style.display="none";
+	  		}
+		else{
+			olddiv.style.display="none";	
+			newdiv.style.display="block";
+			}},
 
-	  var items=document.getElementById("Itemdesc")
-	  //@todo check if in db
-	  //@todo validate address format w OSV/GM
+	  validateDonor(){
+		  var firstname=document.getElementById("FirstName")
+		  var lastname=document.getElementById("LastName")
+		  var phone=document.getElementById("Phone")
+		  var address=document.getElementById("Address")
+		  var email=document.getElementById("Email")
+		  var other=document.getElementById("Other")
+		  var donordict={firstname: firstname.value,
+			    lastname: lastname.value,
+			    address: address.value,
+			    phone: phone.value,
+			    email: email.value,
+			    other:other.value}
 
+		  var items=document.getElementById("Itemdesc")
+		  //@todo check if in db
+		  //@todo validate address format w OSV/GM
 
-  }}
+		  var stopdict={inputtime: 1234,
+		  stoptype:"pickup",
+		  status: "Unmarked",
+		  hidden:"false",
+		  items: items,
+		  donor: donordict}
+
+		  this.$store.dispatch('addStop',this.$store,stopdict)
+		  alert(stopdict)
+		}
+	  }
 	}
 
 </script>
@@ -108,5 +138,12 @@ export default{  props: { trip: {
 	margin-left:10px;
 	padding:10px;
 
+}
+#addnewdon{
+	display:inline-block;
+	width:20px;
+	height:20px;
+	vertical-align:middle;
+	background-color:red;
 }
 </style>

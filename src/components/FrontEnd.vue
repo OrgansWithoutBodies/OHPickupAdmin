@@ -1,5 +1,5 @@
-<template>
-  <div class="test"> test
+ <template>
+  <div class="test"> 
   <div class="tripcontrol">
     <button>◀</button>
     <select v-model="selectedday"><option v-bind:value="trip.date" v-for="trip in trips">{{trip.date}}</option></select>
@@ -7,7 +7,7 @@
     <button>+</button>
   </div>
   
-  <trip-card  v-bind:trip="trips[0]" @slotdbl="addStop"/>
+  <trip-card  v-bind:trip="trips[0]" @slotdbl="addStopWind"/>
 
    <button> ... </button><p/>
    <draggable v-model="stoplist" @start="drag=true" @end="drag=false">
@@ -15,11 +15,11 @@
          <stop-card v-bind:stop="stop"/>
     </div>
     </draggable>
-      <button @click="addStop"> Add New Stop </button>
+      <button @click="addStopWind"> Add New Stop </button>
       <button> Show Hidden Stops</button><p/>
       <button> Save Stops for this Trip</button><p/>
       <button @click='showSettings'> Show Settings Menu </button>
-      <button> About </button>
+      <button @click='showAbout'> About </button>
 
     <modal name="AddNewStop" adaptive="true" height="auto" scrollable="true" class="newstopwindow">
     <div id="spacing">
@@ -33,6 +33,14 @@
     </div>
     </modal>
 
+    <modal name="aboutPage">
+    <div id="spacing">
+      Developed by:
+        V
+      Version:
+        {{version}}
+    </div>
+    </modal>
    
   </div>
 </template>
@@ -63,17 +71,31 @@ export default {
     Settings,
     draggable
   },
+
+  data () {
+    return {}},
   computed:{
 
     donors () {
         return this.$store.state.data.donors
       },
-    selectedday (){return "11/13/2018"},
-    stoplist:{get(){return this.$store.state.data.stops},set(value){this.$store.commit('updateList',value)} },
+    selectedday (){
+      return this.$store.highlightedtrip
+    },
+    stoplist:{
+      get(){
+        return this.$store.state.data.stops
+        },
+      set(value){
+        this.$store.commit('updateList',value)
+        } 
+    },
     stops () {
       return this.$store.state.data.stops
     },
-    triplen () { return Array.apply(null, {length: maxpertrip}).map(Number.call, Number)},
+    triplen () { 
+      return Array.apply(null, {length: maxpertrip}).map(Number.call, Number)
+    },
     trips () {
       return this.$store.state.data.trips
     }
@@ -81,13 +103,17 @@ export default {
   methods:{
   testfn:function(evt){
   },
-  addStop:function(pos){
+  addStopWind:function(pos){
     this.$modal.show('AddNewStop',{pos:pos})
 
+  },
+  commitStop:function(stop){
+    this.$store.dispatch(this.$store,stop)
   },
   showSettings:function(evt){
   this.$modal.show('ShowSettings')
   },
+  showAbout:function(evt){this.$modal.show('aboutPage')},
   onEnd:function(evt){
 
   },

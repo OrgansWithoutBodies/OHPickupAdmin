@@ -1,14 +1,8 @@
 <template>
 <div class="card">
-
-<button class="donor" @click="toggleDon" v-bind:id="stop.inputtime"> {{stop.donor.firstname}}, {{stop.donor.lastname}}</button><p/>
-<div class="donorinfo" id="donorinfo "   style="display:inline-block;">
-<i class="address">{{stop.donor.address}}</i><p/>
-<u class="phone"> {{stop.donor.phone}}</u><p/>
-</div><p/>
 <b class="items"> Items:</b> {{stop.items}}<p/>
 <b class="status">{{stop.status}}</b>
-<input type="button" value="Mark Called" class="called"><p/>
+<input type="button" value="Mark as Called" class="called"><p/>
 
 <div class="responsediv">
 <select id="response">
@@ -30,6 +24,7 @@
     <button @click='heedWarning'>Cancel Stop</button>
     </div>
     </modal>
+
 </div>
 </template>
 

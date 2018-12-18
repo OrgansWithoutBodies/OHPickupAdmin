@@ -14,9 +14,10 @@
 	</div>
 
 	<b class="settingsheader">Map API Backend:</b><br/>
-	<input type="radio" value="GM" class="backrad">Google Maps<br/>
-	<input type="radio" value="OSV" class="backrad">Open Street View
-	
+	<select v-model="mapapi">
+		<option value="OSV" class="backrad">Open Street View</option>
+		<option value="GM" class="backrad">Google Maps<br/></option>
+	</select>
 
 
 
@@ -68,6 +69,7 @@ export default{  props: { trip: {
   data () {
     return {
       backend: "",
+      mapapi:""
 
       }
     }

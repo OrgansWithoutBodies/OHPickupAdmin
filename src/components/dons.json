@@ -1,4 +1,4 @@
-{"data":
+
   {"trips":
     [{"type":"pickup/dropoff",
     "date":"11/13/2018",
@@ -42,4 +42,4 @@
 
 "employees":[{"id":123,"firstname":"emp1"},
   {"id":567,"firstname":"emp2"},
-  {"id":456,"firstname":"emp3"}]}}
+  {"id":456,"firstname":"emp3"}]}

@@ -5,6 +5,8 @@ wd= os.getcwd()
 imsize=[8.5,11]#inches
 dpi=100
 impix= [int(i*dpi) for i in imsize]
+
+
 def blankPage():
 	dt="Date:"
 	lhskeys=["Name:","Phone:","Address:","City/Initials:"]	
@@ -28,7 +30,7 @@ def blankPage():
 	draw=ImageDraw.Draw(page)
 
 	for p in range(6):
-		TLC=(LRpadding,Toppadding+p*(len(lhskeys)*lhsgap))#TopLeftCorner
+		TLC=(LRpadding,Toppadding+p*(len(lhskeys)*lhsgap))#TopLeftCorner of this strip
 		draw.text([TLC[0]-numfont.size,TLC[1]+lhsgap],str(p+1),font=numfont)
 		for l in range(len(lhskeys)):
 			lpos=(TLC[0],TLC[1]+lhsgap*l)

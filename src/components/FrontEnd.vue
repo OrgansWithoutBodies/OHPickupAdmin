@@ -10,11 +10,13 @@
   <trip-card  v-bind:trip="trips[0]" @slotdbl="addStopWind"/>
 
    <button> ... </button><p/>
-   <draggable v-model="stoplist" @start="drag=true" @end="drag=false">
-    <div v-for="stop in stops" :key="stop.inputtime">
+
+   <draggable :list="stoplist"  >
+    <div v-for="stop in stoplist" >
          <stop-card v-bind:stop="stop"/>
     </div>
     </draggable>
+   
       <button @click="addStopWind"> Add New Stop </button>
       <button> Show Hidden Stops</button><p/>
       <button> Save Stops for this Trip</button><p/>
@@ -87,7 +89,7 @@ export default {
         return this.$store.state.data.stops
         },
       set(value){
-        this.$store.commit('updateList',value)
+        this.$store.commit('updateStopList',value)
         } 
     },
     stops () {

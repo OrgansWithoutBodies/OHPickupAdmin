@@ -46,10 +46,13 @@ const store = new Vuex.Store({
     'SET_DATA'(state,data){
       state.data=data
     },
+    'UPDATE_STOPLIST_ORDER'(state,stoplist){
+      state.data.stops=stoplist
+    },
 
   },
   actions: {
-    addStop (store, stop) {
+    addStop ({commit},store, stop) {
 
       axios.post(endpoint+'/stops',stop)
       .then(_ => {commit('ADD_STOP', stop)
@@ -70,6 +73,10 @@ const store = new Vuex.Store({
                       })
       }
     },
+  updateStopList({commit},stoplist){
+    alert(stoplist)
+    commit('UPDATE_STOPLIST_ORDER',stoplist)
+  },
         
 
     

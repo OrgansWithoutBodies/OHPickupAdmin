@@ -6,7 +6,8 @@
 <i class="address">{{stop.donor.address}}</i><p/>
 <u class="phone"> {{stop.donor.phone}}</u><p/>
 </div><p/>-->
-<b class="items"> Items:</b> {{stop.items}}<p/>
+<b class="items"> Items:</b> {{stop.items}}
+<input type="button" value="Update Items" class="updateitems"><p/>
 <b class="status">{{stop.status}}</b>
 <input type="button" value="Mark as Called" class="called"><p/>
 

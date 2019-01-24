@@ -7,15 +7,10 @@
     <button>+</button>
   </div>
   
-  <trip-card  v-bind:trip="trips[0]" @slotdbl="addStopWind"/>
+  <trip-card  v-bind:trip="trips[0]" @slotdbl="addStopWind" v-bind:stops="stoplist"/>
 
    <button> ... </button><p/>
 
-   <draggable :list="stoplist"  >
-    <div v-for="stop in stoplist" >
-         <stop-card v-bind:stop="stop"/>
-    </div>
-    </draggable>
    
       <button @click="addStopWind"> Add New Stop </button>
       <button> Show Hidden Stops</button><p/>

@@ -1,38 +1,41 @@
 <template>
-<div class="card">
-<!--
-<button class="donor" @click="toggleDon" v-bind:id="stop.inputtime"> {{stop.donor.firstname}}, {{stop.donor.lastname}}</button><p/>
-<div class="donorinfo" id="donorinfo"   style="display:inline-block;">
-<i class="address">{{stop.donor.address}}</i><p/>
-<u class="phone"> {{stop.donor.phone}}</u><p/>
-</div><p/>-->
-<b class="items"> Items:</b> {{stop.items}}
-<input type="button" value="Update Items" class="updateitems"><p/>
-<b class="status">{{stop.status}}</b>
-<input type="button" value="Mark as Called" class="called"><p/>
-
-<div class="responsediv">
-<select id="response">
-<option disabled value=""> Please Select Response Below </option>
-<option value="confirmed">Confirmed </option>
-<option value="noans">No Answer</option>
-</select>
-<button>Save Response</button><p/>
-</div>
-<input type="button" class="hidebtn" value="Hide Stop">
-<input type="button" class="delbtn" value="Cancel Stop" @click="showCancel">
-
- <modal name="CancelWarning" adaptive="true">
- <div id="spacing">
-    <h1>Warning</h1>: This will permanently delete information related to this stop. If you Hide the stop instead then all data will remain in database.
-    <p/>
-    <button @click='hideWarning'>Keep Stop</button>
-
-    <button @click='heedWarning'>Cancel Stop</button>
+  <div class="card">
+    <!--
+    <button class="donor" @click="toggleDon" v-bind:id="stop.inputtime"> {{stop.donor.firstname}}, {{stop.donor.lastname}}</button><p/>
+    <div class="donorinfo" id="donorinfo"   style="display:inline-block;">
+    <i class="address">{{stop.donor.address}}</i><p/>
+    <u class="phone"> {{stop.donor.phone}}</u><p/>
+    </div><p/>-->
+    <div class="handle">
+    X
     </div>
-    </modal>
+    <b class="items"> Items:</b> {{stop.items}}
+    <input type="button" value="Update Items" class="updateitems"><p/>
+    <b class="status">{{stop.status}}</b>
+    <input type="button" value="Mark as Called" class="called"><p/>
 
-</div>
+    <div class="responsediv">
+    <select id="response">
+    <option disabled value=""> Please Select Response Below </option>
+    <option value="confirmed">Confirmed </option>
+    <option value="noans">No Answer</option>
+    </select>
+    <button>Save Response</button><p/>
+    </div>
+    <input type="button" class="hidebtn" value="Hide Stop">
+    <input type="button" class="delbtn" value="Cancel Stop" @click="showCancel">
+
+     <modal name="CancelWarning" adaptive="true">
+     <div id="spacing">
+        <h1>Warning</h1>: This will permanently delete information related to this stop. If you Hide the stop instead then all data will remain in database.
+        <p/>
+        <button @click='hideWarning'>Keep Stop</button>
+
+        <button @click='heedWarning'>Cancel Stop</button>
+        </div>
+        </modal>
+
+  </div>
 </template>
 
 <script>

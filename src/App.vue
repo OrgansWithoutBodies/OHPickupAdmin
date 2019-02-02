@@ -2,16 +2,17 @@
 <template>
   <div id="app">
   
-    <router-view/>
+  <router-link to="/admin/">admin</router-link>
+  -
+  <router-link to="/request/">request</router-link>
+  <router-view/>
   </div>
 </template>
 <script>
-import FrontEnd from './components/FrontEnd'
 
 export default {
   name: 'App',
   components: {
-    FrontEnd
   },
   data:{version:"0.0.2"}
 }

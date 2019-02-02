@@ -12,7 +12,7 @@
 </div>
    <div class="unassignedbin">
    <b>Unassigned Stops Bin</b>
-    <draggable :list="stops" :options="dragOptions" :move="onMove"><!--:options="{group:'cards'}"-->
+    <draggable :list="stops" :options="dragOptions" :move="onMove">
      
       <div v-for="stop in stops">
              <stop-card v-bind:stop="stop"/>
@@ -49,18 +49,25 @@ export default {
  
     }
   },
-  computed:{dragOptions(){return{animation:0,ghostClass:"ghost"}}},
+  computed:{dragOptions(){return{animation:1,ghostClass:"ghost"}}},//{group:'cards',handle:'.handle'}
   methods:{
     onMove:function({ relatedContext, draggedContext }) {
       console.log(relatedContext.element)
     },
+    
     testfn:function(evt,test){console.log(evt)},
-    toggleFilled:function(evt){
 
-      if(evt.target.className=='tripslot empty')
+    toggleFilled:function(evt,original){
+      if(evt.target.className=='tripslot empty'){
         evt.target.className='tripslot filled';
-        else evt.target.className='tripslot empty'
+      }
+      else {
+        evt.target.className='tripslot empty';
+        alert(evt.detail)
+
+      }
     },
+    
     slotdbl:function(evt){ 
       this.$emit("slotdbl",evt.target.id)
     }

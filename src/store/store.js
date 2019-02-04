@@ -10,17 +10,20 @@ Vue.use(Vuex) // only required if you're using modules.
 Vue.use(VueAxios, axios)
 const endpoint = " http://localhost:3000/"
 const dataep = endpoint+'db'
+
 const store = new Vuex.Store({
   highlightedtrip:"11/13/2018",
   dbbackend:"REST",
   endpoint:endpoint,
   mapbackend:"GM",
+
   state: {
     data: {"trips":[],
     "donors":[],
     "employees":[],
     "stops":[]}
   },
+
   mutations: {
     'ADD_EMPLOYEE'(state,emp){
       state.employees.push(emp)
@@ -49,8 +52,8 @@ const store = new Vuex.Store({
     'UPDATE_STOPLIST_ORDER'(state,stoplist){
       state.data.stops=stoplist
     },
-
   },
+  
   actions: {
     addStop ({commit},store, stop) {
 

@@ -8,20 +8,21 @@ import VueAxios from 'vue-axios'
 Vue.use(Vuex) // only required if you're using modules.
               // We're using modules, so there you go.
 Vue.use(VueAxios, axios)
-const endpoint = " http://localhost:3000/"
-const dataep = endpoint+'db'
+const endpoint = " http://localhost:8000/"
+const dataep = endpoint+'truck/api'
 
 const store = new Vuex.Store({
-  highlightedtrip:"11/13/2018",
   dbbackend:"REST",
   endpoint:endpoint,
   mapbackend:"GM",
 
   state: {
-    data: {"trips":[],
-    "donors":[],
-    "employees":[],
-    "stops":[]}
+    selday:"11/13/2018",
+    donors:[],
+    stops:[],
+    trips:[],
+    employees:[],
+    trucks:[],
   },
 
   mutations: {
@@ -37,6 +38,7 @@ const store = new Vuex.Store({
     'ADD_TRIP'(state,trip){
       state.trips.push(trip)
     },
+
     'NEST_TRIP_IN_STOP'(state,stop,tripid){
       stop.trip=state.trips.find(x=>x.id === tripid)
     },
@@ -46,12 +48,27 @@ const store = new Vuex.Store({
     'NEST_EMPLOYEE_IN_TRIP'(){},
     'NEST_EMPLOYEE_IN_TRIP'(){},
     'NEST_EMPLOYEE_IN_TRIP'(){},
-    'SET_DATA'(state,data){
-      state.data=data
+    'SET_DONORS'(state,donors){
+      state.donors=donors
+    },
+    'SET_EMPS'(state,emps){
+      state.employees=emps
+    },
+    'SET_STOPS'(state,stops){
+      state.stops=stops
+    },
+    'SET_TRIPS'(state,trips){
+      state.trips=trips
+    },
+    'SET_TRUCKS'(state,trucks){
+      state.trucks=trucks
     },
     'UPDATE_STOPLIST_ORDER'(state,stoplist){
-      state.data.stops=stoplist
+      state.stops=stoplist
     },
+    'UPDATE_SEL_TRIP'(state,sel){
+      state.selday=sel
+    }
   },
   
   actions: {
@@ -65,17 +82,47 @@ const store = new Vuex.Store({
     
       })
     },
-
+    changeSelTrip({commit},sel){
+      commit('UPDATE_SEL_TRIP',sel)
+    },
   loadDataFrom({commit},format="REST")  {
     
     if(format=="REST"){
-      axios.get(dataep)
-        .then(r => r.data)
+      axios.get(dataep+'/donors/')
+        .then(r => r.data)  
         .then(data => {
-           commit('SET_DATA',data)
-                      })
+           commit('SET_DONORS',data)
+                      }
+              )
+      axios.get(dataep+'/trips/')
+        .then(r => r.data)  
+        .then(data => {
+           commit('SET_TRIPS',data)
+                      }
+              )
+      axios.get(dataep+'/trucks/')
+        .then(r => r.data)  
+        .then(data => {
+           commit('SET_TRUCKS',data)
+                      }
+              )
+      axios.get(dataep+'/employees/')
+        .then(r => r.data)  
+        .then(data => {
+           commit('SET_EMPS',data)
+                      }
+              )
+      axios.get(dataep+'/stops/')
+        .then(r => r.data)  
+        .then(data => {
+           commit('SET_STOPS',data)
+                      }
+              )
       }
     },
+  loadDonors({commit}){
+
+  },
   updateStopList({commit},stoplist){
     alert(stoplist)
     commit('UPDATE_STOPLIST_ORDER',stoplist)

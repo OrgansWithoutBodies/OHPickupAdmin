@@ -2,9 +2,9 @@
 <template>
   <div id="app">
   
-  <router-link to="/admin/">admin</router-link>
+  <router-link to="/view/">admin</router-link>
   -
-  <router-link to="/request/">request</router-link>
+  <router-link to="/inp/">request</router-link>
   <router-view/>
   </div>
 </template>

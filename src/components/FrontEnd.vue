@@ -6,7 +6,7 @@
     <button>▶</button>  
     <button>+</button>
   </div>
-  
+  Donors:{{donors}}
   <trip-card  v-bind:trip="trips[0]" @slotdbl="addStopWind" v-bind:stops="stoplist"/>
 
    <button> ... </button><p/>
@@ -34,7 +34,9 @@
     <div id="spacing">
       Developed by:
         V
+        <p/>
       Version:
+        0
         {{version}}
     </div>
     </modal>
@@ -73,28 +75,35 @@ export default {
     return {}},
   computed:{
 
-    donors () {
-        return this.$store.state.data.donors
+    selectedday:{
+      get:function(){
+      return this.$store.state.selday
       },
-    selectedday (){
-      return this.$store.highlightedtrip
+      set:function(sel){
+      this.$store.dispatch('changeSelTrip',sel)
+      }
+    },
+    donors:{
+      get(){
+        return this.$store.state.donors
+        },
+      set(value){
+        this.$store.commit('updateStopList',value)
+        } 
     },
     stoplist:{
       get(){
-        return this.$store.state.data.stops
+        return this.$store.state.stops
         },
       set(value){
         this.$store.commit('updateStopList',value)
         } 
     },
     stops () {
-      return this.$store.state.data.stops
-    },
-    triplen () { 
-      return Array.apply(null, {length: maxpertrip}).map(Number.call, Number)
+      return this.$store.state.stops
     },
     trips () {
-      return this.$store.state.data.trips
+      return this.$store.state.trips
     }
   },
   methods:{

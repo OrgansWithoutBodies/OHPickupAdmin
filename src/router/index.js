@@ -9,12 +9,12 @@ export default new Router({
 mode:'history',
 routes: [
     {
-      path: '/admin/',
+      path: '/view/',
       name: 'FrontEnd',
       component: FrontEnd
     },
     {
-    	path:'/request/',
+    	path:'/inp/',
     	name:'RequestInput',
     	component:RequestInput
     },

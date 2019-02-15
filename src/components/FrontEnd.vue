@@ -1,14 +1,26 @@
  <template>
-  <div class="test"> 
+  <div class="test">
   <div class="tripcontrol">
     <button>◀</button>
-    <select v-model="selectedday"><option v-bind:value="trip.date" v-for="trip in trips">{{trip.date}}</option></select>
+    <select v-model="selectedday"><option v-bind:value="trip.Date" v-for="trip in trips">{{trip.Date}}</option></select>
     <button>▶</button>  
     <button>+</button>
   </div>
   Donors:{{donors}}
-  <trip-card  v-bind:trip="trips[0]" @slotdbl="addStopWind" v-bind:stops="stoplist"/>
+  <trip-card  v-bind:trip="trips[0]" @slotdbl="addStopWind"/>
 
+   <div class="unassignedbin">
+   <b>Unassigned Stops Bin</b>
+
+<draggable :list="stops" :options="dragOptions" :move="onMove">
+     
+      <div v-for="stop in stoplist">
+             <stop-card v-bind:stop="stop"/>
+      </div>
+     
+    </draggable>
+
+  </div>
    <button> ... </button><p/>
 
    
@@ -74,7 +86,7 @@ export default {
   data () {
     return {}},
   computed:{
-
+    dragOptions(){return{animation:1,ghostClass:"ghost"}},//{group:'cards',handle:'.handle'}
     selectedday:{
       get:function(){
       return this.$store.state.selday
@@ -90,42 +102,40 @@ export default {
       set(value){
         this.$store.commit('updateStopList',value)
         } 
-    },
-    stoplist:{
-      get(){
-        return this.$store.state.stops
-        },
-      set(value){
-        this.$store.commit('updateStopList',value)
-        } 
-    },
-    stops () {
-      return this.$store.state.stops
+      },
+      stoplist:{
+        get(){
+          return this.$store.state.stops
+          },
+        set(value){
+          this.$store.commit('updateStopList',value)
+          } 
     },
     trips () {
       return this.$store.state.trips
     }
   },
   methods:{
-  testfn:function(evt){
-  },
-  addStopWind:function(pos){
-    this.$modal.show('AddNewStop',{pos:pos})
+    
+    testfn:function(evt){
+    },
+    addStopWind:function(pos){
+      this.$modal.show('AddNewStop',{pos:pos})
 
-  },
-  commitStop:function(stop){
-    this.$store.dispatch(this.$store,stop)
-  },
-  showSettings:function(evt){
-  this.$modal.show('ShowSettings')
-  },
-  showAbout:function(evt){this.$modal.show('aboutPage')},
-  onEnd:function(evt){
+    },
+    commitStop:function(stop){
+      this.$store.dispatch(this.$store,stop)
+    },
+    showSettings:function(evt){
+    this.$modal.show('ShowSettings')
+    },
+    showAbout:function(evt){this.$modal.show('aboutPage')},
+    onEnd:function(evt){
 
-  },
-  checkMove:function(evt,originalEvent){
+    },
+    checkMove:function(evt,originalEvent){
 
-  }
+    }
   }
 }
 
@@ -155,6 +165,11 @@ a {
 #spacing{
 padding:20px;
 border-radius:10px;
+}
+
+.ghost{
+  opacity:0.7;
+  background: #eefbff;
 }
 
 

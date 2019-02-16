@@ -1,18 +1,15 @@
 
 <template>
   <div id="app">
-  
-  <router-link to="/view/">admin</router-link>
-  -
-  <router-link to="/inp/">request</router-link>
-  <router-view/>
+  <front-end/>
   </div>
 </template>
 <script>
-
+import FrontEnd from './components/FrontEnd'
 export default {
   name: 'App',
   components: {
+  FrontEnd
   },
   data:{version:"0.0.2"}
 }

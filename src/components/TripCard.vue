@@ -22,7 +22,6 @@
     </div>
     <map-module/>
   
-<input type="button" value="Minimize Trip Order by Maptime" class=""><p/>
 <input type="button" value="Save Trip Order" class="savebtn">
 
 </div>

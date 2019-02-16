@@ -23,6 +23,7 @@ const store = new Vuex.Store({
     trips:[],
     employees:[],
     trucks:[],
+    latlons:[],
   },
 
   mutations: {
@@ -93,6 +94,25 @@ const store = new Vuex.Store({
     .then(r => console.log(r.data.routes[0].distance/1000*kmtomile))
     .catch(e => console.log(e))
   },
+  geoCode({commit},address){
+    return new Promise((resolve,reject) => {
+    //var csrf = document.cookie.split(';')[0].split('=')
+    // var csrf = this.$cookies.get('X-CSRFToken')
+   // console.log(csrf)
+    var und_add=address.replace(new RegExp(' ','g'),'_')
+    const url= 'http://localhost:8000/truck/geo/'+und_add+'/'
+    const options = {
+      method:'GET',
+      url:url,
+      headers:{
+       //  "X-CSRFToken":csrf[1]
+      },
+    }
+    console.log(options)
+    axios(options).
+    then(r =>
+      resolve(r)).catch(err => console.log(err))
+  })},
   loadDataFrom({commit},format="REST")  {
     
     if(format=="REST"){
@@ -136,6 +156,19 @@ const store = new Vuex.Store({
     },
   loadDonors({commit}){
 
+  },
+  minDist({commit},coords){
+    var coordlist=[]
+    for (var c=0;c<coords.length;c++){
+      coordlist.push(coords[c][1]+','+coords[c][0])
+    }
+    var coorduri= coordlist.join(';')
+    const uri=routeep+'table/v1/driving/'+coorduri
+
+      console.log(uri)
+    axios.get(uri)
+    .then(r => console.log(r))
+    .catch(e => console.log(e))
   },
   updateStopList({commit},stoplist){
     alert(stoplist)

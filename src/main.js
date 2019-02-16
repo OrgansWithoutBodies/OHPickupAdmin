@@ -3,7 +3,6 @@
 import Vue from 'vue'
 import App from './App'
 
-import router from './router'
 import store from './store/store.js'
 
 import VModal from 'vue-js-modal'
@@ -14,7 +13,6 @@ const VERSION = '0.0.1'
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
-  router,
   store: store,
   components: { App },
   template: '<App/>'

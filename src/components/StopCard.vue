@@ -39,7 +39,7 @@
 </template>
 
 <script>
-
+//@TODO - detect if is in-stop & if so have up/down arrows?
 export default {
   name: 'StopCard',
   props: { stop: {

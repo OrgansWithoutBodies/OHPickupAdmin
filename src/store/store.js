@@ -10,7 +10,6 @@ Vue.use(Vuex) // only required if you're using modules.
 Vue.use(VueAxios, axios)
 const endpoint = "http://localhost:8000/"
 const dataep = endpoint+'truck/api'
-const routeep ="http://localhost:5000/"
 const store = new Vuex.Store({
   dbbackend:"REST",
   endpoint:endpoint,
@@ -73,46 +72,43 @@ const store = new Vuex.Store({
   },
   
   actions: {
-    addStop ({commit},store, stop) {
+    // addStop ({commit},store, stop) {
 
-      axios.post(endpoint+'/stops',stop)
-      .then(_ => {commit('ADD_STOP', stop)
-      })
-      .then(response => {})
-      .catch(e => {
+    //   axios.post(endpoint+'/stops',stop)
+    //   .then(_ => {commit('ADD_STOP', stop)
+    //   })
+    //   .then(response => {})
+    //   .catch(e => {
     
-      })
-    },
+    //   })
+    // },
     changeSelTrip({commit},sel){
       commit('UPDATE_SEL_TRIP',sel)
     },
-  distBetween({commit},startpoint=[-121.9486,38.3451],endpoint=[-121.9696,38.2870]){//make sure long/lat is in right order!! opposite from gmaps
-    const uri=routeep+'route/v1/driving/'+startpoint[0]+','+startpoint[1]+';'+endpoint[0]+','+endpoint[1]+'?overview=false'
-    console.log(uri)
-    const kmtomile=0.6213712
-    axios.get(uri)
-    .then(r => console.log(r.data.routes[0].distance/1000*kmtomile))
-    .catch(e => console.log(e))
-  },
+  // distBetween({commit},startpt=[-121.9486,38.3451],endpt=[-121.9696,38.2870]){//make sure long/lat is in right order!! opposite from gmaps
+  //   const url=endpoint+
+  //   const uri=routeep+'route/v1/driving/'+startpoint[0]+','+startpoint[1]+';'+endpt[0]+','+endpt[1]+'?overview=false'
+  //   console.log(uri)
+  //   const kmtomile=0.6213712
+  //   axios.get(uri)
+  //   .then(r => console.log(r.data.routes[0].distance/1000*kmtomile))
+  //   .catch(e => console.log(e))
+  // },
   geoCode({commit},address){
     return new Promise((resolve,reject) => {
-    //var csrf = document.cookie.split(';')[0].split('=')
-    // var csrf = this.$cookies.get('X-CSRFToken')
-   // console.log(csrf)
-    var und_add=address.replace(new RegExp(' ','g'),'_')
-    const url= 'http://localhost:8000/truck/geo/'+und_add+'/'
-    const options = {
-      method:'GET',
-      url:url,
-      headers:{
-       //  "X-CSRFToken":csrf[1]
-      },
+      var und_add=address.replace(new RegExp(' ','g'),'_')
+      const url= endpoint+'truck/geo/'+und_add+'/'
+      const options = {
+        method:'GET',
+        url:url,
+        
+      }
+      console.log(options)
+      axios(options).
+      then(r =>
+        resolve(r)).catch(err => console.log(err))
     }
-    console.log(options)
-    axios(options).
-    then(r =>
-      resolve(r)).catch(err => console.log(err))
-  })},
+  )},
   loadDataFrom({commit},format="REST")  {
     
     if(format=="REST"){
@@ -157,19 +153,28 @@ const store = new Vuex.Store({
   loadDonors({commit}){
 
   },
-  minDist({commit},coords){
-    var coordlist=[]
-    for (var c=0;c<coords.length;c++){
-      coordlist.push(coords[c][1]+','+coords[c][0])
-    }
-    var coorduri= coordlist.join(';')
-    const uri=routeep+'table/v1/driving/'+coorduri
+  minDist({commit},stops){
+    return new Promise((resolve,reject) => {
 
-      console.log(uri)
-    axios.get(uri)
-    .then(r => console.log(r))
-    .catch(e => console.log(e))
-  },
+      var conlist=[]
+      for(var stpid in stops){
+        const stp=stops[stpid]
+        conlist.push([stp['lat'],stp['lng']].join(','))
+      }
+      var adds=conlist.join(';')
+      const url= endpoint+'truck/min/'+adds+'/'
+      console.log(url)
+      const options = {
+        method:'GET',
+        url:url,
+      }
+      axios(options).
+        then(r=>r.data).
+        then(r =>
+              resolve(r)).
+        catch(err => console.log(err))
+    }
+  )},
   updateStopList({commit},stoplist){
     alert(stoplist)
     commit('UPDATE_STOPLIST_ORDER',stoplist)

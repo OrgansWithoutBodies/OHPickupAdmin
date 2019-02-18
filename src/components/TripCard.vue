@@ -2,14 +2,20 @@
 <div class="trip">  
   
     <b class="tripdate">{{trip.Date}}</b><p/> 
-    Truck: <select v-model="seltruck">
-    <option v-for="truck in trucks" :value="truck">{{truck.LicensePlate}} ({{truck.CabSpots}} seats)</option>
-    </select>
-    <div v-if="seltruck!=''"><p/>
-    Employees Assigned to trip:<select v-for="seat in seltruck.CabSpots">
-      <option>None</option>
-      <option v-for="emp in emps"> {{emp.Firstname}}</option>
-    </select>
+    <div class="triptruck">
+      Truck: <select v-model="seltruck">
+          <option value="Null">None</option>
+        <option v-for="truck in trucks" :value="truck">{{truck.LicensePlate}} ({{truck.CabSpots}} seats)</option>
+      </select>
+      <div v-if="seltruck!=''" class="tripemps"><p/>
+        Employees Assigned to trip:
+        <select v-for="seat in seltruck.CabSpots">
+          <option value="Null">None</option>
+          <option v-for="emp in emps"> {{emp.Firstname}}</option>
+        </select>
+        <button>Add New Employee</button>
+      </div>
+      <button>Add New Truck</button>
     </div>
     <div class="tripcontent">
       <div>
@@ -20,14 +26,15 @@
         </div>
       </div>
     </div>
-    <map-module/>
-  
-<input type="button" value="Save Trip Order" class="savebtn">
-
+    <map-module class="tripmap"/>
+    <div class="tripbtns">
+      <input type="button" value="Save Trip Order" class="savebtn">
+    </div>
 </div>
 </template>
 
 <script>
+//@TODO - employees assigned pops up red if no driver (ignoreable)
 //https://shareurcodes.com/blog/create%20drag%20and%20droppable%20cards%20in%20laravel%20using%20vue%20js
 //https://stackoverflow.com/questions/11065803/determine-what-is-being-dragged-from-dragenter-dragover-events
 import StopCard from './StopCard'
@@ -84,6 +91,9 @@ trucks:{get:function(){return this.$store.state.trucks}}
 </script>
 
 <style scoped>
+.tripbtns{
+  grid-area:btns;
+}
 .tripslot{
   width:50px;
   height:50px;
@@ -104,6 +114,12 @@ trucks:{get:function(){return this.$store.state.trucks}}
   text-transform:capitalize;
   text-shadow: 2px 3px 10px silver;
   color:#ff0000;
+  grid-area:lbl;
+}
+.triptruck{
+  grid-area:truck;}
+.tripmap{
+  grid-area:map;
 }
 .tripgrid{
   //display:inline-grid;
@@ -112,12 +128,20 @@ trucks:{get:function(){return this.$store.state.trucks}}
 }
 .tripcontent{
   display:grid;
+  grid-area:stops;
   grid-template-columns:1fr 1fr;}
 .trip{
   background-color:#eeeeee;
   width:1000px;
   margin:5px;
   border-radius:20px;
+  display:grid;
+  grid-template-areas:"lbl lbl lbl"
+                      "truck . ."
+                      "stops map map"
+                      "stops map map"
+                      "stops map map"
+                      "btns btns btns";
 }
 
 .unassignedbin{

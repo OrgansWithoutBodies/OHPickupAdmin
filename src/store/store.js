@@ -159,7 +159,7 @@ const store = new Vuex.Store({
       var conlist=[]
       for(var stpid in stops){
         const stp=stops[stpid]
-        conlist.push([stp['lat'],stp['lng']].join(','))
+        conlist.push([stp['lng'],stp['lat']].join(','))
       }
       var adds=conlist.join(';')
       const url= endpoint+'truck/min/'+adds+'/'

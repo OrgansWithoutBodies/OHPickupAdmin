@@ -7,7 +7,7 @@
 	  <p/>-->
 	  <input v-for="l in ['lat','lng']" v-model="pt['pos'][l]"></input> 
 	  <button @click='geocode(k)'>locate</button>
-	  <button @click="chOrd(pt,-1)">▲</button><button>▼</button>
+	  <button @click="chOrd(pt,-1)">▲</button><button>▼</button><button>X</button>
 	  </div>
 	</div>
 	  <button @click="waypoints.push({'add':'','pos':{'lng':'','lat':''}})">+</button>
@@ -19,10 +19,11 @@
 	      	<l-tooltip :content="pt['add']">
 	      	</l-tooltip>
 	      </l-marker>
-	      <l-polyline :lat-lngs="orderedwaypoints" color="green" weight="5" fillOpacity="0" />
+	      <!--<l-polyline :lat-lngs="orderedwaypoints" color="green" weight="5" fillOpacity="0" />-->
+	      <l-polyline :lat-lngs="tripgeoms" color="orange" fillOpacity="0"/>
 	    </l-map>
 	    </div>
-	<input type="button" @click="mindist" value="Minimize Trip Order by Maptime" class=""><p/>
+	<input type="button" @click="mindist" value="Order Stops by minimum trip time" class=""><p/>
 </div>
 </template>
 
@@ -41,16 +42,20 @@ data(){return{
 	'shelterlatlon':[	38.366197,-121.976714],
 	'mapdata':{'url':'http://{s}.tile.osm.org/{z}/{x}/{y}.png','zoom':13},
 	'mintime':null,
+	'routes':null,
+	'tripgeoms':[],
 }},
 mounted(){
 },
 computed:{
 	orderedwaypoints:function(){
 		if (this.mintime!=null){
+			const ways=[{'pos':this.ohlatlon},...this.waypoints]
 			var ordlist=[]
 			for(var m in this.mintime){
-				ordlist.push(this.waypoints[this.mintime[m]]['pos'])
+				ordlist.push(ways[this.mintime[m]]['pos'])
 			}
+			ordlist.push(ordlist[0])
 			return ordlist
 		}
 		else{
@@ -74,28 +79,41 @@ chOrd:function(pt,dir){
 },
 		geocode:function(id){
 			var point= this.waypoints[id]
-			console.log(point)
 			this.$store.dispatch('geoCode',point['add']).then(response => {
 				const adds=response['data']
 		
 				var coords = Object.values(adds)[0];
 				point['pos']['lat']=coords['lat'];
 				point['pos']['lng']=coords['lng'];
-				console.log(point)
 
 			})
 		},
 		mindist:function(event){
-			var coords = [];
+			var coords = [this.ohlatlon];
 			for(var pt in this.waypoints){
 				coords.push(this.waypoints[pt]['pos'])
 			}
-			console.log(coords)
-			this.$store.dispatch('minDist',coords).then(response => this.mintime=response.mintime)
-
+			this.$store.dispatch('minDist',coords).then(response => {
+				var pts=[];
+				const wy=response['waypts']
+				for (var pt in wy){
+					const o=wy[pt]['waypoint_index']
+					pts.push(o)
+				};
+				var tripgeoms =[]
+				for(var t in response['trips']){
+					const crds=response['trips'][t]['geometry']['coordinates']
+					for(var crd in crds){
+					tripgeoms.push({'lng':crds[crd][0],"lat":crds[crd][1]})
+					}
+				}
+				this.tripgeoms=tripgeoms
+				console.log(tripgeoms)
+				this.mintime=pts;
+			})
 		},
-}
 	}
+}
 
 </script>
 <style scoped>

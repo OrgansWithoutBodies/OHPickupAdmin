@@ -4,29 +4,33 @@
     <b class="tripdate">{{trip.Date}}</b><p/> 
     <div class="triptruck">
       Truck: <select v-model="seltruck">
-          <option value="Null">None</option>
+          <option value="null">None</option>
         <option v-for="truck in trucks" :value="truck">{{truck.LicensePlate}} ({{truck.CabSpots}} seats)</option>
       </select>
-      <div v-if="seltruck!=''" class="tripemps"><p/>
+      <div v-if="seltruck!=null" class="tripemps"><p/>
         Employees Assigned to trip:
         <select v-for="seat in seltruck.CabSpots">
           <option value="Null">None</option>
-          <option v-for="emp in emps"> {{emp.Firstname}}</option>
+          <option v-for="emp in emps"> {{emp.Firstname}} <span v-if="emp.Driverstatus"> (DRIVER)</span></option>
         </select>
         <button>Add New Employee</button>
       </div>
       <button>Add New Truck</button>
     </div>
+
+
     <div class="tripcontent">
-      <div>
-        <div v-for="slot in triplen" class="tripgrid">
-          <div  v-bind:id="slot" class="tripslot empty" @dblclick="slotdbl" @click.shift="toggleFilled" @dragenter="toggleFilled">
+      <draggable :list="trip" :move="toggleFilled" >
+        <stop-card :stop="stop" v-for="stop in stops">
+        </stop-card>
+        <div v-for="slot in triplen-stops.length" class="tripgrid">
+          <div  v-bind:id="slot" class="tripslot empty" @dblclick="slotdbl" @click.shift="toggleFilled" >
             <div class="slotcontents"/>
           </div>
         </div>
-      </div>
+      </draggable>
     </div>
-    <map-module class="tripmap"/>
+    <map-module :stops="stops" class="tripmap"/>
     <div class="tripbtns">
       <input type="button" value="Save Trip Order" class="savebtn">
     </div>
@@ -35,6 +39,9 @@
 
 <script>
 //@TODO - employees assigned pops up red if no driver (ignoreable)
+//@TODO - if stop is dropped into general dropzone it just gets added to end of list
+//@TODO - able to drop stop into a list of trip days & let it sort itself out
+//@TODO - have in-trip style for stopcard
 //https://shareurcodes.com/blog/create%20drag%20and%20droppable%20cards%20in%20laravel%20using%20vue%20js
 //https://stackoverflow.com/questions/11065803/determine-what-is-being-dragged-from-dragenter-dragover-events
 import StopCard from './StopCard'
@@ -53,16 +60,29 @@ export default {
   data () {
     return {
     
-      seltruck:'',
     }
   },
   computed:{
+  seltruck:{
+    get:function(){
+      return this.trip.Truck
+      },
+    set:function(truck){
+      this.trip.Truck=truck
+    }
+  },
     emps:{
       get:function(){
         return this.$store.state.employees
       },
       set:function(){}
 },
+    stops(){
+
+      var stoplist=this.$store.state.stops.filter(stop => stop.ScheduledTrip==this.trip.id)
+      console.log(stoplist)
+      return stoplist
+    },
 trucks:{get:function(){return this.$store.state.trucks}}
   },
   methods:{
@@ -70,22 +90,23 @@ trucks:{get:function(){return this.$store.state.trucks}}
       console.log(relatedContext.element)
     },
     
-    testfn:function(evt,test){console.log(evt)},
+    testfn:function(evt,test){},
 
     toggleFilled:function(evt,original){
+      console.log(evt)
       if(evt.target.className=='tripslot empty'){
         evt.target.className='tripslot filled';
       }
       else {
         evt.target.className='tripslot empty';
-        alert(evt.detail)
+        console.log(evt.detail)
 
       }
     },
     
     slotdbl:function(evt){ 
       this.$emit("slotdbl",evt.target.id)
-    }
+    },
   }
 }
 </script>

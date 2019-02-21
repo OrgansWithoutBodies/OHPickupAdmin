@@ -1,13 +1,20 @@
 <template>
   <div class="card">
-    <!--
-    <button class="donor" @click="toggleDon" v-bind:id="stop.inputtime"> {{stop.donor.firstname}}, {{stop.donor.lastname}}</button><p/>
-    <div class="donorinfo" id="donorinfo"   style="display:inline-block;">
-    <i class="address">{{stop.donor.address}}</i><p/>
-    <u class="phone"> {{stop.donor.phone}}</u><p/>
-    </div><p/>-->
-    <div class="handle">
-    X
+    <div v-if="stop.ScheduledTrip!=null">
+      {{stop.ScheduledOrder}}
+      {{stop.Donor.Firstname}}
+      <div class="handle">
+      X
+      </div>
+    </div>
+    <div v-else>
+      <div v-if="stop.Donor">
+        <button class="donor" @click="toggleDon(stop.Donor.id)" v-bind:id="stop.inputtime"> {{stop.Donor.Firstname}}, {{stop.Donor.Lastname}}</button><p/>
+        <div class="donorinfo" :id="'donorinfo '+stop.Donor.id"   style="display:inline-block;">
+          <i class="address">{{stop.Donor.Address}}</i><p/>
+          <u class="phone"> {{stop.Donor.Phone}}</u><p/>
+        </div><p/>
+      </div>
     </div>
     <b class="items"> Items:</b> {{stop.items}}
     <input type="button" value="Update Items" class="updateitems"><p/>
@@ -22,8 +29,11 @@
     </select>
     <button>Save Response</button><p/>
     </div>
+
+    <!--
     <input type="button" class="hidebtn" value="Hide Stop">
     <input type="button" class="delbtn" value="Cancel Stop" @click="showCancel">
+-->
 
      <modal name="CancelWarning" adaptive="true">
      <div id="spacing">
@@ -39,7 +49,8 @@
 </template>
 
 <script>
-//@TODO - detect if is in-stop & if so have up/down arrows?
+//@TODO - detect if is in-trip & if so show up/down arrows
+//@TODO - editable address
 export default {
   name: 'StopCard',
   props: { stop: {
@@ -54,17 +65,16 @@ export default {
   },
   methods:{
   showCancel:function(evt){this.$modal.show('CancelWarning')},
-  toggleDon:function(evt){
-    const id=evt.target.id
+  toggleDon:function(id){
 
     var dondiv=document.getElementById("donorinfo "+id)
-
     if (dondiv.style.display=="none"){
       dondiv.style.display="inline-block";
       }
   else{
     dondiv.style.display="none";  
-    }}
+    }
+    }
   }
 }
 </script>
@@ -97,9 +107,10 @@ padding:15px 3px;
   color:#ff0000;
 }
 
-#donorinfo{
+.donorinfo{
   padding:10px 50px;
   background-color:#cdcdcd;
+  display:none;
   border:1px dashed white;
   border-radius:8px;
 

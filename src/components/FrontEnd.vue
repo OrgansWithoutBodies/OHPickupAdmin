@@ -2,25 +2,21 @@
   <div class="test">
   <div class="tripcontrol">
     <button>◀</button>
-    <select v-model="selectedday"><option v-bind:value="trip.Date" v-for="trip in trips">{{trip.Date}}</option></select>
+    <select v-model="selectedday"><option :value="trip.Date" v-for="trip in trips">{{trip.Date}}</option></select>
     <button>▶</button>  
-    <button>+</button>
+    <button >+</button>
   </div>
-  Donors:{{donors}}
-  <trip-card  v-bind:trip="trips[0]" @slotdbl="addStopWind"/>
+  <trip-card  :trip="seltrip" @slotdbl="addStopWind"/>
 
    <div class="unassignedbin">
-   <b>Unassigned Stops Bin</b>
+    <b>Unassigned Stops Bin</b>
 
-<draggable :list="stops" :options="dragOptions" :move="onMove">
-     
+    <draggable v-model="stoplist" :options="dragOptions" :list="trip" :move="onMove" class="bin"> 
       <div v-for="stop in stoplist">
-             <stop-card v-bind:stop="stop"/>
+             <stop-card v-if="stop.ScheduledTrip==null" :stop="stop"/>
       </div>
-     
     </draggable>
-
-  </div>
+   </div>
    <button> ... </button><p/>
 
    
@@ -60,6 +56,8 @@
 
 
 <script>
+//@TODO - on drop make ScheduledTrip=droppedID, set order either based on dropped position or if none then last
+//@TODO - computed property of latlons of all addresses
 //https://github.com/SortableJS/Vue.Draggablehttps://github.com/SortableJS/Vue.Draggable
 const maxpertrip = 6
 import DonorCard from './DonorCard'
@@ -87,6 +85,10 @@ export default {
     return {}},
   computed:{
     dragOptions(){return{animation:1,ghostClass:"ghost"}},//{group:'cards',handle:'.handle'}
+    seltrip(){
+      const fil= this.trips.filter(trip => trip.Date==this.selectedday)
+      return fil[0]
+    },
     selectedday:{
       get:function(){
       return this.$store.state.selday
@@ -100,7 +102,7 @@ export default {
         return this.$store.state.donors
         },
       set(value){
-        this.$store.commit('updateStopList',value)
+        this.$store.dispatch('updateStopList',value)
         } 
       },
       stoplist:{
@@ -108,7 +110,7 @@ export default {
           return this.$store.state.stops
           },
         set(value){
-          this.$store.commit('updateStopList',value)
+          this.$store.dispatch('updateStopList',value)
           } 
     },
     trips () {
@@ -133,8 +135,8 @@ export default {
     onEnd:function(evt){
 
     },
-    checkMove:function(evt,originalEvent){
-
+    onMove:function(evt){
+      console.log(evt.draggedContext.element.id)
     }
   }
 }
@@ -170,6 +172,12 @@ border-radius:10px;
 .ghost{
   opacity:0.7;
   background: #eefbff;
+}
+.bin{
+  display:grid;
+  width:100%;
+  grid-template-columns:repeat(auto-fill,300px);
+  grid-template-rows:1000px;
 }
 
 

@@ -32,6 +32,12 @@ import {LMap, LTileLayer, LMarker,LIcon, LTooltip,LPolyline } from 'vue2-leaflet
 
 export default{
 name:'mapmodule',
+props:{
+	stops:{
+		type:Array,
+		required:false
+	}
+},
 components:{LMap, LTileLayer, LMarker,LTooltip,LPolyline},
 data(){return{
 	'waypoints':[{'add':'','pos':{lng:-121.9486,lat:38.3451},'ord':1},{'ord':2,'add':'','pos':{lng:-121.9696,lat:38.2870}}],

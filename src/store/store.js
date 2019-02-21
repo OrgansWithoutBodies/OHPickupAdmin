@@ -16,7 +16,7 @@ const store = new Vuex.Store({
   mapbackend:"GM",
 
   state: {
-    selday:"11/13/2018",
+    selday:"2018-11-13",
     donors:[],
     stops:[],
     trips:[],
@@ -53,9 +53,17 @@ const store = new Vuex.Store({
     },
     'SET_EMPS'(state,emps){
       state.employees=emps
+
     },
     'SET_STOPS'(state,stops){
-      state.stops=stops
+
+      var newstops=[]
+      for(var s in stops){
+          var stop = stops[s]
+          stop['Donor']= state.donors.find(x=>x.id===stop.RequesterId)
+          newstops.push(stop)
+    }
+      state.stops=newstops
     },
     'SET_TRIPS'(state,trips){
       state.trips=trips
@@ -176,7 +184,7 @@ const store = new Vuex.Store({
     }
   )},
   updateStopList({commit},stoplist){
-    alert(stoplist)
+    
     commit('UPDATE_STOPLIST_ORDER',stoplist)
   },
         

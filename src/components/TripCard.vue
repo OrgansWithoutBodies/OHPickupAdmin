@@ -30,7 +30,7 @@
         </div>
       </draggable>
     </div>
-    <map-module :stops="stops" class="tripmap"/>
+    <map-module :waypoints="waypoints" class="tripmap"/>
     <div class="tripbtns">
       <input type="button" value="Save Trip Order" class="savebtn">
     </div>
@@ -41,16 +41,23 @@
 //@TODO - employees assigned pops up red if no driver (ignoreable)
 //@TODO - if stop is dropped into general dropzone it just gets added to end of list
 //@TODO - able to drop stop into a list of trip days & let it sort itself out
-//@TODO - have in-trip style for stopcard
+//@TODO - more robust way of geocoding - @change=geocode() ? 
 //https://shareurcodes.com/blog/create%20drag%20and%20droppable%20cards%20in%20laravel%20using%20vue%20js
 //https://stackoverflow.com/questions/11065803/determine-what-is-being-dragged-from-dragenter-dragover-events
 import StopCard from './StopCard'
-import mapModule from './mapModule'
+import MapModule from './MapModule'
 import draggable from 'vuedraggable'
 
 export default {
-  components:{StopCard,draggable,mapModule},
+  components:{StopCard,draggable,MapModule},
   name: 'TripCard',
+  mounted(){
+  this.loadcodes()
+  console.log(this.waypoints)
+  },
+  updated(){
+    this.loadcodes()
+    },
   props: { trip: {
     type: Object,
     required: true
@@ -63,6 +70,15 @@ export default {
     }
   },
   computed:{
+  adds(){
+    var adds={}
+
+      for(var s in this.stops){
+        var stop=this.stops[s]
+        adds[s]=stop.Donor.Address
+      }
+      return adds
+  },
   seltruck:{
     get:function(){
       return this.trip.Truck
@@ -78,14 +94,41 @@ export default {
       set:function(){}
 },
     stops(){
+      return this.filterStops()
+    }, 
+    geocodes:{
+      get:function(){
+        var codes= this.$store.state.geocodes
+        return codes
+      },
+      set:function(){
 
-      var stoplist=this.$store.state.stops.filter(stop => stop.ScheduledTrip==this.trip.id)
-      console.log(stoplist)
-      return stoplist
+
+      }
+    },
+    waypoints(){
+      var waypts=[]
+
+      for(var s in this.stops){
+        var add=this.adds[s]
+        var code=this.geocodes[add]
+
+        waypts.push({'add':add,'pos':code,'ord':stop.ScheduledOrder})
+      }
+      return waypts
     },
 trucks:{get:function(){return this.$store.state.trucks}}
   },
   methods:{
+  loadcodes:function(){this.filterStops()
+    this.$store.dispatch('loadGeoCodes',this.waypoints)
+    },
+    filterStops:function(event){
+
+      var stoplist=this.$store.state.stops.filter(stop => stop.ScheduledTrip==this.trip.id)
+
+      return stoplist
+    },
     onMove:function({ relatedContext, draggedContext }) {
       console.log(relatedContext.element)
     },

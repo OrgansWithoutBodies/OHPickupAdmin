@@ -1,6 +1,11 @@
 <template>
   <div class="card">
+    <select v-model="stop.ScheduledTrip">
+    <option :value="null">Unscheduled</option>
+    <option v-for="trip in $store.state.trips" :value="trip.id">{{trip.Date}}</option>
+    </select>
     <div v-if="stop.ScheduledTrip!=null">
+      <button @click="chOrd(pt,-1)">▲</button><button>▼</button>
       {{stop.ScheduledOrder}}
       {{stop.Donor.Firstname}}
       <div class="handle">
@@ -49,7 +54,6 @@
 </template>
 
 <script>
-//@TODO - detect if is in-trip & if so show up/down arrows
 //@TODO - editable address
 export default {
   name: 'StopCard',

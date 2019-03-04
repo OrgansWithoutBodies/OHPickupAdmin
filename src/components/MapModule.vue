@@ -1,20 +1,25 @@
+<button @click="getlatlons">TEST</button>
 <template>
 <div class="mapwrapper">
+	<!--  
 	<div v-for="(pt,k) in waypoints">
 	  <div>
 	  Street Address:<input v-model="pt['add']"></input>
-	<!--  <div class="orderbubble" v-if="pt['ord']!=null">{{pt['ord']}}</div>
-	  <p/>-->
-	  <input v-for="l in ['lat','lng']" v-model="pt['pos'][l]"></input> 
+	
+	<div class="orderbubble" v-if="pt['ord']!=null">{{pt['ord']}}</div>
+	  <p/>
+
+	   <input v-for="l in ['lat','lng']" v-model="pt['pos'][l]"></input> 
+	   {{pt.dist}}
 	  <button @click='geocode(k)'>locate</button>
-	  <button @click="chOrd(pt,-1)">▲</button><button>▼</button><button>X</button>
 	  </div>
 	</div>
-	  <button @click="waypoints.push({'add':'','pos':{'lng':'','lat':''}})">+</button>
+	  -->
+
 	  <div>
 	 <l-map :zoom="mapdata.zoom" :center="ohlatlon" class="map">
-	      <l-tile-layer :url="mapdata.url" :attribution="attribution"></l-tile-layer>
-	      <l-marker :lat-lng="ohlatlon" ><l-tooltip content="Store"></l-tooltip></l-marker>
+	      <l-tile-layer :url="mapdata.url" :attribution="mapdata.attribution"></l-tile-layer>
+	      <l-marker :lat-lng="ohlatlon" ><l-tooltip content="Thrift Store"></l-tooltip></l-marker>
 	      <l-marker v-for="pt in waypoints" :lat-lng.sync="pt['pos']">
 	      	<l-tooltip :content="pt['add']">
 	      	</l-tooltip>
@@ -23,30 +28,27 @@
 	      <l-polyline :lat-lngs="tripgeoms" color="orange" fillOpacity="0"/>
 	    </l-map>
 	    </div>
-	<input type="button" @click="mindist" value="Order Stops by minimum trip time" class=""><p/>
+	<input type="button" @click="mindist" value="Order Route by minimum trip time" class=""><p/>
 </div>
 </template>
 
 <script>
+//@TODO - add up trip distances & time - hover over route has individual distance?
 import {LMap, LTileLayer, LMarker,LIcon, LTooltip,LPolyline } from 'vue2-leaflet';
 
 export default{
 name:'mapmodule',
 props:{
-	stops:{
+	waypoints:{
 		type:Array,
 		required:false
 	}
 },
 components:{LMap, LTileLayer, LMarker,LTooltip,LPolyline},
 data(){return{
-	'waypoints':[{'add':'','pos':{lng:-121.9486,lat:38.3451},'ord':1},{'ord':2,'add':'','pos':{lng:-121.9696,lat:38.2870}}],
-	'coords':{lng:'',lat:''},
-	'addresses':[],
-	'attribution':'&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
 	'ohlatlon':{'lat':38.353184,'lng': -121.975337},
-	'shelterlatlon':[	38.366197,-121.976714],
-	'mapdata':{'url':'http://{s}.tile.osm.org/{z}/{x}/{y}.png','zoom':13},
+	'shelterlatlon':[38.366197,-121.976714],
+	'mapdata':{'url':'http://{s}.tile.osm.org/{z}/{x}/{y}.png','zoom':13,'attribution':'&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'},
 	'mintime':null,
 	'routes':null,
 	'tripgeoms':[],
@@ -54,6 +56,7 @@ data(){return{
 mounted(){
 },
 computed:{
+
 	orderedwaypoints:function(){
 		if (this.mintime!=null){
 			const ways=[{'pos':this.ohlatlon},...this.waypoints]
@@ -68,11 +71,6 @@ computed:{
 			return []
 		}
 	},
-	latlons:function(){
-		for(add in this.addresses){
-			this.geocode(add)
-		}
-	}
 },
 methods:{
 chOrd:function(pt,dir){
@@ -94,6 +92,9 @@ chOrd:function(pt,dir){
 
 			})
 		},
+		getlatlons:function(event){
+			
+		},
 		mindist:function(event){
 			var coords = [this.ohlatlon];
 			for(var pt in this.waypoints){
@@ -112,9 +113,12 @@ chOrd:function(pt,dir){
 					for(var crd in crds){
 					tripgeoms.push({'lng':crds[crd][0],"lat":crds[crd][1]})
 					}
+
+					this.waypoints[t]['dist']=response['trips'][t]['distance']
+
 				}
 				this.tripgeoms=tripgeoms
-				console.log(tripgeoms)
+				
 				this.mintime=pts;
 			})
 		},

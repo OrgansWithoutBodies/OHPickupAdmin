@@ -22,7 +22,7 @@ const store = new Vuex.Store({
     trips:[],
     employees:[],
     trucks:[],
-    latlons:[],
+    geocodes:{},
   },
 
   mutations: {
@@ -31,6 +31,20 @@ const store = new Vuex.Store({
     },
     'ADD_DONOR'(state,donor){
       state.donors.push(donor)
+    },
+    'ADD_GEOCODES'(state,codes){
+
+      for(var add in codes){
+        
+        if(!(add in state.geocodes)){
+          state.geocodes[add]=codes[add]
+        }
+        else{
+          console.log(state.geocodes)
+        }
+
+      }
+      state.geocodes
     },
     'ADD_STOP' (state, stop) {
       state.stops.push(stop)
@@ -111,12 +125,26 @@ const store = new Vuex.Store({
         url:url,
         
       }
-      console.log(options)
+      // console.log(options)
       axios(options).
-      then(r =>
-        resolve(r)).catch(err => console.log(err))
+        then(r =>
+          resolve(r)).catch(err => console.log(err))
+    })
+  },
+  loadGeoCodes({commit,dispatch},stops){
+    // console.log(stops)
+    var codes=[]
+    for(var s in stops){
+      var add=stops[s]['add']
+      dispatch('geoCode',add).then(
+        response =>{
+
+  commit('ADD_GEOCODES',response.data)
+        }
+      )
     }
-  )},
+
+  },
   loadDataFrom({commit},format="REST")  {
     
     if(format=="REST"){

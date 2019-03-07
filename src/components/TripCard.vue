@@ -6,7 +6,7 @@
     <div class="triptruck">
       Truck: <select v-model="seltruck">
           <option value="null">None</option>
-        <option v-for="truck in trucks" :value="truck">{{truck.LicensePlate}} ({{truck.CabSpots}} seats)</option>
+        <option v-for="truck in trucks" :key="truck.id" :value="truck">{{truck.LicensePlate}} ({{truck.CabSpots}} seats)</option>
       </select>
       <div v-if="seltruck!=null" class="tripemps"><p/>
         Employees Assigned to trip:
@@ -22,9 +22,10 @@
     
     <div class="tripcontent">
       <draggable :list="trip" :move="toggleFilled" >
-        <stop-card :stop="stop" v-for="stop in stops">
+      {{waypoints[0][ord]}}
+        <stop-card :stop="stop" v-for="(stop,s) in stops" :key="stop.id" :order="waypoints[s]['ord']">
         </stop-card>
-        <div v-for="slot in triplen-stops.length" class="tripgrid">
+        <div v-for="slot in triplen-stops.length" :key="slot.id" class="tripgrid">
           <div  v-bind:id="slot" class="tripslot empty" @dblclick="slotdbl" @click.shift="toggleFilled" >
             <div class="slotcontents"/>
           </div>
@@ -54,7 +55,6 @@ export default {
   name: 'TripCard',
   mounted(){
   this.loadcodes()
-  console.log(this.waypoints)
   },
   updated(){
     this.loadcodes()
@@ -63,7 +63,7 @@ export default {
     type: Object,
     required: true
   },
-  triplen:{type:Object,required:false,default:10},
+  triplen:{type:Number,required:false,default:10},
   },
   data () {
     return {

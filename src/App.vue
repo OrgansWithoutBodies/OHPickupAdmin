@@ -11,7 +11,7 @@ export default {
   components: {
   FrontEnd
   },
-  data:{version:"0.0.2"}
+  data(){return{version:"0.0.2"}}
 }
 </script>
 <style>

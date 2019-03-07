@@ -20,7 +20,7 @@
 	 <l-map :zoom="mapdata.zoom" :center="ohlatlon" class="map">
 	      <l-tile-layer :url="mapdata.url" :attribution="mapdata.attribution"></l-tile-layer>
 	      <l-marker :lat-lng="ohlatlon" ><l-tooltip content="Thrift Store"></l-tooltip></l-marker>
-	      <l-marker v-for="pt in waypoints" :lat-lng.sync="pt['pos']">
+	      <l-marker v-for="pt in waypoints" :key="pt.id" :lat-lng.sync="pt['pos']">
 	      	<l-tooltip :content="pt['add']">
 	      	</l-tooltip>
 	      </l-marker>
@@ -62,6 +62,7 @@ computed:{
 			const ways=[{'pos':this.ohlatlon},...this.waypoints]
 			var ordlist=[]
 			for(var m in this.mintime){
+				console.log(m)
 				ordlist.push(ways[this.mintime[m]]['pos'])
 			}
 			ordlist.push(ordlist[0])
@@ -106,6 +107,9 @@ chOrd:function(pt,dir){
 				for (var pt in wy){
 					const o=wy[pt]['waypoint_index']
 					pts.push(o)
+					if(o>0){//o0 is store
+						this.waypoints[o-1]['ord']=pt
+					}
 				};
 				var tripgeoms =[]
 				for(var t in response['trips']){

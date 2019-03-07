@@ -10,6 +10,7 @@ Vue.use(Vuex) // only required if you're using modules.
 Vue.use(VueAxios, axios)
 const endpoint = process.env.VUE_APP_ENDPOINT
 const dataep = endpoint+'truck/api'
+console.log(endpoint)
 const store = new Vuex.Store({
   dbbackend:"REST",
   endpoint:endpoint,
@@ -40,7 +41,6 @@ const store = new Vuex.Store({
           state.geocodes[add]=codes[add]
         }
         else{
-          console.log(state.geocodes)
         }
 
       }

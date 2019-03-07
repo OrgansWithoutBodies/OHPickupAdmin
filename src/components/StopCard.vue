@@ -1,5 +1,6 @@
 <template>
   <div class="card">
+    <div class="order" v-if="order!=null">#{{order}}</br></div>
     <select v-model="stop.ScheduledTrip">
     <option :value="null">Unscheduled</option>
     <option v-for="trip in $store.state.trips" :value="trip.id">{{trip.Date}}</option>
@@ -61,6 +62,10 @@ export default {
   props: { stop: {
     type: Object,
     required: true
+  },
+  order:{
+  type: Number,
+  required:false
   }
   },
   data () {
@@ -86,6 +91,9 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.order{
+  font-size:30px;
+}
 .card{
 background-color:#dddddd;
 border:10px solid #999999;

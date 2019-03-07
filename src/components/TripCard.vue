@@ -2,6 +2,7 @@
 <div class="trip">  
   
     <b class="tripdate">{{trip.Date}}</b><p/> 
+    <!--
     <div class="triptruck">
       Truck: <select v-model="seltruck">
           <option value="null">None</option>
@@ -17,8 +18,8 @@
       </div>
       <button>Add New Truck</button>
     </div>
-
-
+    -->
+    
     <div class="tripcontent">
       <draggable :list="trip" :move="toggleFilled" >
         <stop-card :stop="stop" v-for="stop in stops">
@@ -62,7 +63,7 @@ export default {
     type: Object,
     required: true
   },
-  triplen:{type:Object,required:false,default:6},
+  triplen:{type:Object,required:false,default:10},
   },
   data () {
     return {

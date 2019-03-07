@@ -8,7 +8,7 @@ import VueAxios from 'vue-axios'
 Vue.use(Vuex) // only required if you're using modules.
               // We're using modules, so there you go.
 Vue.use(VueAxios, axios)
-const endpoint = "http://localhost:8000/"
+const endpoint = process.env.VUE_APP_ENDPOINT
 const dataep = endpoint+'truck/api'
 const store = new Vuex.Store({
   dbbackend:"REST",

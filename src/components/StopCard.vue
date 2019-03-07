@@ -21,6 +21,7 @@
         </div><p/>
       </div>
     </div>
+    <!--
     <b class="items"> Items:</b> {{stop.items}}
     <input type="button" value="Update Items" class="updateitems"><p/>
     <b class="status">{{stop.status}}</b>
@@ -34,7 +35,7 @@
     </select>
     <button>Save Response</button><p/>
     </div>
-
+    -->
     <!--
     <input type="button" class="hidebtn" value="Hide Stop">
     <input type="button" class="delbtn" value="Cancel Stop" @click="showCancel">

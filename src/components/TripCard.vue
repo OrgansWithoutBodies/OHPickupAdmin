@@ -2,6 +2,7 @@
 <div class="trip">  
   
     <b class="tripdate">{{trip.Date}}</b><p/> 
+
     <!--
     <div class="triptruck">
       Truck: <select v-model="seltruck">
@@ -22,17 +23,19 @@
     
     <div class="tripcontent">
       <draggable :list="trip" :move="toggleFilled" >
-      {{waypoints[0][ord]}}
-        <stop-card :stop="stop" v-for="(stop,s) in stops" :key="stop.id" :order="waypoints[s]['ord']">
-        </stop-card>
+      <div v-if="waypoints[0]">
+      {{waypoints[0]}}
+      </div>
+      <stop-card :stopid="stop.id" v-for="(stop,s) in stops" :key="stop.id" :order="waypoints[s]['ord']"/>
         <div v-for="slot in triplen-stops.length" :key="slot.id" class="tripgrid">
           <div  v-bind:id="slot" class="tripslot empty" @dblclick="slotdbl" @click.shift="toggleFilled" >
             <div class="slotcontents"/>
           </div>
         </div>
+      <button>+</button>
       </draggable>
     </div>
-    <map-module :waypoints="waypoints" class="tripmap"/>
+    <map-module :waypoints="waypoints" @ordered="orderstops" class="tripmap"/>
     <div class="tripbtns">
       <input type="button" value="Save Trip Order" class="savebtn">
     </div>
@@ -51,14 +54,14 @@ import MapModule from './MapModule'
 import draggable from 'vuedraggable'
 
 export default {
+//mounted(){
+//  this.loadcodes()
+ // },
+  //updated(){
+   // this.loadcodes()
+    //},
   components:{StopCard,draggable,MapModule},
   name: 'TripCard',
-  mounted(){
-  this.loadcodes()
-  },
-  updated(){
-    this.loadcodes()
-    },
   props: { trip: {
     type: Object,
     required: true
@@ -72,12 +75,12 @@ export default {
   },
   computed:{
   adds(){
-    var adds={}
-
+      var adds={}
       for(var s in this.stops){
         var stop=this.stops[s]
         adds[s]=stop.Donor.Address
       }
+      //this.loadcodes(adds)
       return adds
   },
   seltruck:{
@@ -113,16 +116,29 @@ export default {
       for(var s in this.stops){
         var add=this.adds[s]
         var code=this.geocodes[add]
-
-        waypts.push({'add':add,'pos':code,'ord':stop.ScheduledOrder})
+        if(!code){
+        }
+        waypts.push({'add':add,'pos':code,'ord':this.stops[s].ScheduledOrder})
       }
       return waypts
     },
 trucks:{get:function(){return this.$store.state.trucks}}
   },
   methods:{
-  loadcodes:function(){this.filterStops()
-    this.$store.dispatch('loadGeoCodes',this.waypoints)
+  orderstops:function(order){
+    for(var o in order.length-1){
+    console.log(this.waypoints[order[o]]['ord'])
+      this.waypoints[order[o]]['ord']=o
+    }
+  },
+  testfn:function(evt,test){console.log(evt)},
+    loadcodes:function(adds=null){
+      if(!adds){
+      this.$store.dispatch('loadGeoCodes',this.adds)
+      }
+      else{
+      this.$store.dispatch('loadGeoCodes',adds)
+      }
     },
     filterStops:function(event){
 
@@ -134,7 +150,6 @@ trucks:{get:function(){return this.$store.state.trucks}}
       console.log(relatedContext.element)
     },
     
-    testfn:function(evt,test){},
 
     toggleFilled:function(evt,original){
       console.log(evt)

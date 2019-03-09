@@ -17,7 +17,7 @@ const store = new Vuex.Store({
   mapbackend:"GM",
 
   state: {
-    selday:"2018-11-13",
+    selday:"2019-02-23",
     donors:[],
     stops:[],
     trips:[],
@@ -33,18 +33,8 @@ const store = new Vuex.Store({
     'ADD_DONOR'(state,donor){
       state.donors.push(donor)
     },
-    'ADD_GEOCODES'(state,codes){
-
-      for(var add in codes){
-        
-        if(!(add in state.geocodes)){
-          state.geocodes[add]=codes[add]
-        }
-        else{
-        }
-
-      }
-      state.geocodes
+    'ADD_GEOCODE'(state,add,code){
+      state.geocodes[add]=code
     },
     'ADD_STOP' (state, stop) {
       state.stops.push(stop)
@@ -64,6 +54,9 @@ const store = new Vuex.Store({
     'NEST_EMPLOYEE_IN_TRIP'(){},
     'SET_DONORS'(state,donors){
       state.donors=donors
+    },
+    'SET_DONATIONS'(state,donations){
+      state.donations=donations
     },
     'SET_EMPS'(state,emps){
       state.employees=emps
@@ -87,6 +80,9 @@ const store = new Vuex.Store({
     },
     'UPDATE_STOPLIST_ORDER'(state,stoplist){
       state.stops=stoplist
+    },
+    'UPDATE_STOP'(state,stopid){
+      state.stops.filter(stop => stop.id==stopid)
     },
     'UPDATE_SEL_TRIP'(state,sel){
       state.selday=sel
@@ -116,32 +112,30 @@ const store = new Vuex.Store({
   //   .then(r => console.log(r.data.routes[0].distance/1000*kmtomile))
   //   .catch(e => console.log(e))
   // },
-  geoCode({commit},address){
-    return new Promise((resolve,reject) => {
-      var und_add=address.replace(new RegExp(' ','g'),'_')
-      const url= endpoint+'truck/geo/'+und_add+'/'
-      const options = {
-        method:'GET',
-        url:url,
-        
-      }
-      // console.log(options)
-      axios(options).
-        then(r =>
-          resolve(r)).catch(err => console.log(err))
-    })
+  geoCode({commit,state},address){
+  return new Promise((resolve,reject) => {
+        var und_add=address.replace(new RegExp(' ','g'),'_')
+        const url= endpoint+'truck/geo/'+und_add+'/'
+        const options = {
+          method:'GET',
+          url:url,
+          }
+        axios(options).
+        then(r =>{
+          commit('ADD_GEOCODE',address,r.data);
+          resolve(r);}).catch(err => {reject(err)});
+    
+   }) 
   },
-  loadGeoCodes({commit,dispatch},stops){
+  loadGeoCodes({commit,dispatch},adds){
     // console.log(stops)
     var codes=[]
-    for(var s in stops){
-      var add=stops[s]['add']
-      dispatch('geoCode',add).then(
-        response =>{
-
-  commit('ADD_GEOCODES',response.data)
+    var ks=Object.keys(adds)
+    if(ks.length>0){
+      for(var a in adds){
+        var add=adds[a]
+        dispatch('geoCode',add)
         }
-      )
     }
 
   },
@@ -191,15 +185,19 @@ const store = new Vuex.Store({
   },
   minDist({commit},stops){
     return new Promise((resolve,reject) => {
+      try {
+        var conlist=[]
+        for(var stpid in stops){
+          const stp=stops[stpid]
 
-      var conlist=[]
-      for(var stpid in stops){
-        const stp=stops[stpid]
-        conlist.push([stp['lng'],stp['lat']].join(','))
+          conlist.push([stp['lng'],stp['lat']].join(','))
+        }
+        var adds=conlist.join(';')
+        const url= endpoint+'truck/min/'+adds+'/'
       }
-      var adds=conlist.join(';')
-      const url= endpoint+'truck/min/'+adds+'/'
-      console.log(url)
+      catch(err){
+        reject(err)
+      }
       const options = {
         method:'GET',
         url:url,
@@ -208,17 +206,16 @@ const store = new Vuex.Store({
         then(r=>r.data).
         then(r =>
               resolve(r)).
-        catch(err => console.log(err))
+        catch(err => reject(err))
     }
   )},
   updateStopList({commit},stoplist){
-    
     commit('UPDATE_STOPLIST_ORDER',stoplist)
   },
         
-
-    
-    
+  updateStop({commit},stop){
+    commit('UPDATE_STOP',stop['id'])
+  },
   
   postData({commit},data,format="REST"){
     if(format=="REST"){

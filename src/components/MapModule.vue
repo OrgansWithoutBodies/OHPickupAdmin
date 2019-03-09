@@ -24,8 +24,8 @@
 	      	<l-tooltip :content="pt['add']">
 	      	</l-tooltip>
 	      </l-marker>
-	      <!--<l-polyline :lat-lngs="orderedwaypoints" color="green" weight="5" fillOpacity="0" />-->
-	      <l-polyline :lat-lngs="tripgeoms" color="orange" fillOpacity="0"/>
+	      <!--<l-polyline :lat-lngs="orderedwaypoints" color="green" weight="5" :fillOpacity="0" />-->
+	      <l-polyline :lat-lngs="tripgeoms" color="orange" :fillOpacity="0"/>
 	    </l-map>
 	    </div>
 	<input type="button" @click="mindist" value="Order Route by minimum trip time" class=""><p/>
@@ -61,11 +61,11 @@ computed:{
 		if (this.mintime!=null){
 			const ways=[{'pos':this.ohlatlon},...this.waypoints]
 			var ordlist=[]
-			for(var m in this.mintime){
-				console.log(m)
+			for(var m in this.mintime){//traverses the track
 				ordlist.push(ways[this.mintime[m]]['pos'])
 			}
 			ordlist.push(ordlist[0])
+			this.$emit('ordered',ordlist)
 			return ordlist
 		}
 		else{
@@ -99,7 +99,15 @@ chOrd:function(pt,dir){
 		mindist:function(event){
 			var coords = [this.ohlatlon];
 			for(var pt in this.waypoints){
-				coords.push(this.waypoints[pt]['pos'])
+				try{
+					coords.push(this.waypoints[pt]['pos'])
+				}
+				catch(err){
+					this.geocode(pt)
+					console.log(this.waypoints)
+						coords.push(this.waypoints[pt]['pos'])
+					
+				}
 			}
 			this.$store.dispatch('minDist',coords).then(response => {
 				var pts=[];
@@ -123,8 +131,9 @@ chOrd:function(pt,dir){
 				}
 				this.tripgeoms=tripgeoms
 				
+			this.$emit('ordered',pts)
 				this.mintime=pts;
-			})
+			}).catch(err => console.log(err))
 		},
 	}
 }

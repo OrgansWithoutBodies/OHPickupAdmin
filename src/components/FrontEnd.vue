@@ -2,7 +2,7 @@
   <div class="test">
   <div class="tripcontrol">
     <button>◀</button>
-    <select v-model="selectedday"><option :value="trip.Date" v-for="trip in trips">{{trip.Date}}</option></select>
+    <select v-model="selectedday"><option v-for="trip in trips" :value="trip.Date" >{{trip.Date}}</option></select>
     <button>▶</button>  
     <button >+</button>
   </div>
@@ -11,9 +11,9 @@
    <div class="unassignedbin">
     <b>Unassigned Stops Bin</b>
 
-    <draggable v-model="stoplist" :options="dragOptions" :list="trip" :move="onMove" class="bin"> 
+    <draggable v-model="stoplist" :options="dragOptions" :list="stoplist" :move="onMove" class="bin"> 
       <div v-for="stop in stoplist"  v-if="stop.ScheduledTrip==null">
-             <stop-card :stop="stop"/>
+             <stop-card :stopid="stop.id"/>
       </div>
     </draggable>
    </div>
@@ -26,13 +26,13 @@
       <button @click='showSettings'> Show Settings Menu </button>
       <button @click='showAbout'> About </button>
 
-    <modal name="AddNewStop" adaptive="true" height="auto" scrollable="true" class="newstopwindow">
+    <modal name="AddNewStop" :adaptive="true" height="auto" :scrollable="true" class="newstopwindow">
     <div id="spacing">
       <AddNewStop/>
     </div>
     </modal>
 
-    <modal name="ShowSettings" adaptive="true" height="auto">
+    <modal name="ShowSettings" :adaptive="true" height="auto">
     <div id="spacing">
       <Settings/>
     </div>
@@ -44,7 +44,6 @@
         V
         <p/>
       Version:
-        0
         {{version}}
     </div>
     </modal>
@@ -69,7 +68,7 @@ import Settings from './Settings'
 import draggable from 'vuedraggable'
 export default {
   name: 'FrontEnd',
-  mounted(){
+  beforeMount(){
       this.$store.dispatch('loadDataFrom')
     },
   components: {
@@ -82,7 +81,7 @@ export default {
   },
 
   data () {
-    return {}},
+    return {version:process.env.VUE_APP_VERSION}},
   computed:{
     dragOptions(){return{animation:1,ghostClass:"ghost"}},//{group:'cards',handle:'.handle'}
     seltrip(){

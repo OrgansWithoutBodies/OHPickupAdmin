@@ -1,17 +1,27 @@
 <template>
   <div class="card">
-    <div class="order" v-if="order!=null">#{{order}}</br></div>
+    <div class="order" v-if="order">#{{order}}<br></div>
     <select v-model="stop.ScheduledTrip">
     <option :value="null">Unscheduled</option>
     <option v-for="trip in $store.state.trips" :value="trip.id">{{trip.Date}}</option>
     </select>
     <div v-if="stop.ScheduledTrip!=null">
+     
+     <!--
       <button @click="chOrd(pt,-1)">▲</button><button>▼</button>
-      {{stop.ScheduledOrder}}
-      {{stop.Donor.Firstname}}
+    -->
+      
+    <edit-line :str="stop.Donor.Firstname"/>
+    <edit-line :str="stop.Donor.Address"/>
+      <div v-if="stop.pos">
+        {{stop['pos']['lat']}}
+      </div>
+     <!--
       <div class="handle">
       X
       </div>
+      -->
+
     </div>
     <div v-else>
       <div v-if="stop.Donor">
@@ -37,12 +47,12 @@
     <button>Save Response</button><p/>
     </div>
     -->
+    
     <!--
     <input type="button" class="hidebtn" value="Hide Stop">
     <input type="button" class="delbtn" value="Cancel Stop" @click="showCancel">
--->
 
-     <modal name="CancelWarning" adaptive="true">
+     <modal name="CancelWarning" :adaptive="true">
      <div id="spacing">
         <h1>Warning</h1>: This will permanently delete information related to this stop. If you Hide the stop instead then all data will remain in database.
         <p/>
@@ -51,16 +61,24 @@
         <button @click='heedWarning'>Cancel Stop</button>
         </div>
         </modal>
+-->
 
   </div>
 </template>
 
 <script>
+import EditLine from './EditLine'
 //@TODO - editable address
 export default {
   name: 'StopCard',
-  props: { stop: {
-    type: Object,
+  beforeMount(){
+    if(this.stop.ScheduledTrip){//if assigned to trip, make sure geocode is loaded
+      this.geoCode()
+    }
+  },
+  components:{EditLine},
+  props: { stopid: {
+    type: Number,
     required: true
   },
   order:{
@@ -68,12 +86,31 @@ export default {
   required:false
   }
   },
-  data () {
-    return {
-      stop: stop
+  computed:{
+    stop:{
+      get:function(){
+         return this.$store.state.stops.filter(stop => stop.id==this.stopid)[0]
+      },
+      set:function(stop){
+        this.$store.dispatch('updateStop',stop)
+      }
+    },
+    data () {
+      return {
+        teststr:"test"
+      }
     }
   },
   methods:{
+  geoCode:function(evt){
+    this.$store.dispatch('geoCode',this.stop.Donor.Address).then(response => {
+    
+    this.stop['pos']=Object.values(response.data)[0]
+
+    })
+//    console.log(resp.data)
+  //  this.stop['pos']=resp.data
+  },
   showCancel:function(evt){this.$modal.show('CancelWarning')},
   toggleDon:function(id){
 

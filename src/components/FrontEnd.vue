@@ -11,7 +11,7 @@
    <div class="unassignedbin">
     <b>Unassigned Stops Bin</b>
 
-    <draggable v-model="stoplist" :options="dragOptions" :list="stoplist" :move="onMove" class="bin"> 
+    <draggable v-model="stoplist" :options="dragOptions" :move="onMove" class="bin"> 
       <div v-for="stop in stoplist"  v-if="stop.ScheduledTrip==null">
              <stop-card :stopid="stop.id"/>
       </div>

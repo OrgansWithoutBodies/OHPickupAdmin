@@ -1,6 +1,5 @@
 <template>
 <div class="trip">  
-  
     <b class="tripdate">{{trip.Date}}</b><p/> 
 
     <!--
@@ -23,10 +22,8 @@
     
     <div class="tripcontent">
       <draggable :list="trip" :move="toggleFilled" >
-      <div v-if="waypoints[0]">
-      {{waypoints[0]}}
-      </div>
-      <stop-card :stopid="stop.id" v-for="(stop,s) in stops" :key="stop.id" :order="waypoints[s]['ord']"/>
+    
+      <stop-card :stopid="stop.id" v-for="(stop,s) in stops" :key="stop.id"/>
         <div v-for="slot in triplen-stops.length" :key="slot.id" class="tripgrid">
           <div  v-bind:id="slot" class="tripslot empty" @dblclick="slotdbl" @click.shift="toggleFilled" >
             <div class="slotcontents"/>
@@ -35,7 +32,7 @@
       <button>+</button>
       </draggable>
     </div>
-    <map-module :waypoints="waypoints" @ordered="orderstops" class="tripmap"/>
+    <map-module :waypoints="waypoints" @ordered="orderstops" :tripid="trip['id']" class="tripmap"/>
     <div class="tripbtns">
       <input type="button" value="Save Trip Order" class="savebtn">
     </div>
@@ -54,11 +51,7 @@ import MapModule from './MapModule'
 import draggable from 'vuedraggable'
 
 export default {
-//mounted(){
-//  this.loadcodes()
- // },
   //updated(){
-   // this.loadcodes()
     //},
   components:{StopCard,draggable,MapModule},
   name: 'TripCard',
@@ -70,7 +63,7 @@ export default {
   },
   data () {
     return {
-    
+      
     }
   },
   computed:{
@@ -80,7 +73,6 @@ export default {
         var stop=this.stops[s]
         adds[s]=stop.Donor.Address
       }
-      //this.loadcodes(adds)
       return adds
   },
   seltruck:{
@@ -99,7 +91,7 @@ export default {
 },
     stops(){
       return this.filterStops()
-    }, 
+    },
     geocodes:{
       get:function(){
         var codes= this.$store.state.geocodes
@@ -132,14 +124,6 @@ trucks:{get:function(){return this.$store.state.trucks}}
     }
   },
   testfn:function(evt,test){console.log(evt)},
-    loadcodes:function(adds=null){
-      if(!adds){
-      this.$store.dispatch('loadGeoCodes',this.adds)
-      }
-      else{
-      this.$store.dispatch('loadGeoCodes',adds)
-      }
-    },
     filterStops:function(event){
 
       var stoplist=this.$store.state.stops.filter(stop => stop.ScheduledTrip==this.trip.id)

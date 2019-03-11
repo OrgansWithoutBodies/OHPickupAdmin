@@ -1,35 +1,27 @@
-<button @click="getlatlons">TEST</button>
 <template>
-<div class="mapwrapper">
-	<!--  
-	<div v-for="(pt,k) in waypoints">
-	  <div>
-	  Street Address:<input v-model="pt['add']"></input>
-	
-	<div class="orderbubble" v-if="pt['ord']!=null">{{pt['ord']}}</div>
-	  <p/>
-
-	   <input v-for="l in ['lat','lng']" v-model="pt['pos'][l]"></input> 
-	   {{pt.dist}}
-	  <button @click='geocode(k)'>locate</button>
-	  </div>
+	<div class="modwrapper">
+	<div v-for="s in stops">
 	</div>
-	  -->
 
-	  <div>
-	 <l-map :zoom="mapdata.zoom" :center="ohlatlon" class="map">
-	      <l-tile-layer :url="mapdata.url" :attribution="mapdata.attribution"></l-tile-layer>
-	      <l-marker :lat-lng="ohlatlon" ><l-tooltip content="Thrift Store"></l-tooltip></l-marker>
-	      <l-marker v-for="pt in waypoints" :key="pt.id" :lat-lng.sync="pt['pos']">
-	      	<l-tooltip :content="pt['add']">
-	      	</l-tooltip>
-	      </l-marker>
-	      <!--<l-polyline :lat-lngs="orderedwaypoints" color="green" weight="5" :fillOpacity="0" />-->
-	      <l-polyline :lat-lngs="tripgeoms" color="orange" :fillOpacity="0"/>
-	    </l-map>
-	    </div>
-	<input type="button" @click="mindist" value="Order Route by minimum trip time" class=""><p/>
-</div>
+		<div class="mapwrapper">
+		 <l-map :zoom="mapdata.zoom" :center="ohlatlon" class="map">
+		      <l-tile-layer :url="mapdata.url" :attribution="mapdata.attribution"></l-tile-layer>
+		      <l-marker :lat-lng="ohlatlon" >
+		      	<l-tooltip content="Thrift Store" />
+		      </l-marker>
+		      <div v-for="s in stops">
+		      <l-marker v-if="s.Donor.pos"  :lat-lng="s.Donor.pos">
+		      	<l-tooltip :content="s.Donor.Address+' ('+s.Donor.Firstname+' '+s.Donor.Lastname+') '">
+		      	</l-tooltip>
+		      </l-marker>
+		      </div>
+
+		    
+		      <l-polyline :lat-lngs="tripgeoms" color="orange" :fillOpacity="0"/>
+		    </l-map>
+		</div>
+		<input type="button" @click="mindist" value="Order Route by minimum trip time" class=""><p/>
+	</div>
 </template>
 
 <script>
@@ -39,6 +31,10 @@ import {LMap, LTileLayer, LMarker,LIcon, LTooltip,LPolyline } from 'vue2-leaflet
 export default{
 name:'mapmodule',
 props:{
+	tripid:{
+		type:Array,
+		required:false
+	},
 	waypoints:{
 		type:Array,
 		required:false
@@ -53,10 +49,12 @@ data(){return{
 	'routes':null,
 	'tripgeoms':[],
 }},
-mounted(){
+updated(){
 },
 computed:{
-
+	stops:function(){
+      return this.$store.state.stops.filter(stop => stop.ScheduledTrip==this.tripid)
+	},
 	orderedwaypoints:function(){
 		if (this.mintime!=null){
 			const ways=[{'pos':this.ohlatlon},...this.waypoints]
@@ -65,7 +63,6 @@ computed:{
 				ordlist.push(ways[this.mintime[m]]['pos'])
 			}
 			ordlist.push(ordlist[0])
-			this.$emit('ordered',ordlist)
 			return ordlist
 		}
 		else{
@@ -74,39 +71,14 @@ computed:{
 	},
 },
 methods:{
-chOrd:function(pt,dir){
-//	const ind = this.waypoints.indexOf(pt)
-//	if(ind>0){
-//		const pluck = this.waypoints[ind+dir]
-//		this.waypoints[ind+dir]=this.waypoints[dir]
-//		this.waypoints[ind]=pluck
-//	}
-},
-		geocode:function(id){
-			var point= this.waypoints[id]
-			this.$store.dispatch('geoCode',point['add']).then(response => {
-				const adds=response['data']
-		
-				var coords = Object.values(adds)[0];
-				point['pos']['lat']=coords['lat'];
-				point['pos']['lng']=coords['lng'];
-
-			})
-		},
-		getlatlons:function(event){
-			
-		},
 		mindist:function(event){
 			var coords = [this.ohlatlon];
-			for(var pt in this.waypoints){
+			for(var s in this.stops){
 				try{
-					coords.push(this.waypoints[pt]['pos'])
+					coords.push(this.stops[s]['Donor']['pos'])
 				}
 				catch(err){
-					this.geocode(pt)
 					console.log(this.waypoints)
-						coords.push(this.waypoints[pt]['pos'])
-					
 				}
 			}
 			this.$store.dispatch('minDist',coords).then(response => {
@@ -116,7 +88,7 @@ chOrd:function(pt,dir){
 					const o=wy[pt]['waypoint_index']
 					pts.push(o)
 					if(o>0){//o0 is store
-						this.waypoints[o-1]['ord']=pt
+						this.waypoints[o-1]['ScheduledOrder']=pt
 					}
 				};
 				var tripgeoms =[]
@@ -132,6 +104,8 @@ chOrd:function(pt,dir){
 				this.tripgeoms=tripgeoms
 				
 			this.$emit('ordered',pts)
+			this.$store.dispatch('nestOrders',pts)
+			
 				this.mintime=pts;
 			}).catch(err => console.log(err))
 		},

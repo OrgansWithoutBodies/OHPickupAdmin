@@ -17,7 +17,7 @@ const store = new Vuex.Store({
   mapbackend:"GM",
 
   state: {
-    selday:"2019-02-23",
+    selday:"2018-11-13",
     donors:[],
     stops:[],
     trips:[],
@@ -42,7 +42,12 @@ const store = new Vuex.Store({
     'ADD_TRIP'(state,trip){
       state.trips.push(trip)
     },
-
+    'NEST_ORDER_IN_STOP'(state,ords){
+      for(var ord in ords){
+        console.log(ord)
+        //state.stops[ord]['ScheduledOrder']=ords[ord]
+      }
+    },
     'NEST_TRIP_IN_STOP'(state,stop,tripid){
       stop.trip=state.trips.find(x=>x.id === tripid)
     },
@@ -143,7 +148,13 @@ const store = new Vuex.Store({
     
     if(format=="REST"){
       axios.get(dataep+'/donors/')
-        .then(r => r.data)  
+        .then(r => r.data)
+        .then(data => {
+          for(var d in data){
+            data[d]['pos']={'lat':null,'lng':null}
+          }
+          return data
+        })  
         .then(data => {
            commit('SET_DONORS',data)
                       }
@@ -185,6 +196,7 @@ const store = new Vuex.Store({
   },
   minDist({commit},stops){
     return new Promise((resolve,reject) => {
+      console.log('test')
       try {
         var conlist=[]
         for(var stpid in stops){
@@ -193,7 +205,8 @@ const store = new Vuex.Store({
           conlist.push([stp['lng'],stp['lat']].join(','))
         }
         var adds=conlist.join(';')
-        const url= endpoint+'truck/min/'+adds+'/'
+        var url= endpoint+'truck/min/'+adds+'/'
+        console.log(url)
       }
       catch(err){
         reject(err)
@@ -209,6 +222,9 @@ const store = new Vuex.Store({
         catch(err => reject(err))
     }
   )},
+  nestOrders({commit},orderlist){
+    commit('NEST_ORDER_IN_STOP',orderlist)
+  },
   updateStopList({commit},stoplist){
     commit('UPDATE_STOPLIST_ORDER',stoplist)
   },

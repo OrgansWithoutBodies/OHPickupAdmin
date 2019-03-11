@@ -1,21 +1,19 @@
 <template>
   <div class="card">
-    <div class="order" v-if="order">#{{order}}<br></div>
+    <div class="order" v-if="stop.ScheduledOrder">#{{stop.ScheduledOrder}}<br></div>
     <select v-model="stop.ScheduledTrip">
     <option :value="null">Unscheduled</option>
     <option v-for="trip in $store.state.trips" :value="trip.id">{{trip.Date}}</option>
     </select>
     <div v-if="stop.ScheduledTrip!=null">
-     
+
      <!--
       <button @click="chOrd(pt,-1)">▲</button><button>▼</button>
     -->
       
     <edit-line :str="stop.Donor.Firstname"/>
     <edit-line :str="stop.Donor.Address"/>
-      <div v-if="stop.pos">
-        {{stop['pos']['lat']}}
-      </div>
+    
      <!--
       <div class="handle">
       X
@@ -68,48 +66,44 @@
 
 <script>
 import EditLine from './EditLine'
-//@TODO - editable address
+import {mapActions} from 'vuex'
+
+//@TODO - save edited address
 export default {
   name: 'StopCard',
-  beforeMount(){
+  created(){
     if(this.stop.ScheduledTrip){//if assigned to trip, make sure geocode is loaded
-      this.geoCode()
+      this.getCode()
     }
   },
   components:{EditLine},
-  props: { stopid: {
-    type: Number,
-    required: true
-  },
-  order:{
-  type: Number,
-  required:false
-  }
+  props: { 
+    stopid: {
+      type: Number,
+      required: true
+    }
   },
   computed:{
     stop:{
       get:function(){
-         return this.$store.state.stops.filter(stop => stop.id==this.stopid)[0]
+         return this.filterStop()[0]
       },
-      set:function(stop){
-        this.$store.dispatch('updateStop',stop)
-      }
+      set:function(stop,evt){
+        console.log(stop)
+          this.updateStop(stop)
+        }
+      },
     },
-    data () {
-      return {
-        teststr:"test"
-      }
-    }
-  },
   methods:{
-  geoCode:function(evt){
-    this.$store.dispatch('geoCode',this.stop.Donor.Address).then(response => {
-    
-    this.stop['pos']=Object.values(response.data)[0]
+  ...mapActions(['geoCode','updateStop']),
 
+  filterStop:function(evt){
+    return this.$store.state.stops.filter(stop => stop.id==this.stopid)
+  },
+  getCode:function(evt){
+    this.geoCode(this.stop.Donor.Address).then(response => {
+        this.stop['Donor']['pos']=Object.values(response.data)[0]
     })
-//    console.log(resp.data)
-  //  this.stop['pos']=resp.data
   },
   showCancel:function(evt){this.$modal.show('CancelWarning')},
   toggleDon:function(id){

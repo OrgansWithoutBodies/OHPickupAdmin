@@ -9,7 +9,6 @@ import VModal from 'vue-js-modal'
 
 Vue.use(VModal)
 Vue.config.productionTip = false
-const VERSION = '0.0.3'
 
 import { Icon }  from 'leaflet'
 import 'leaflet/dist/leaflet.css'

@@ -17,7 +17,7 @@ const store = new Vuex.Store({
   mapbackend:"GM",
 
   state: {
-    selday:"2018-11-13",
+    selday:"2019-03-14",
     donors:[],
     stops:[],
     trips:[],
@@ -45,6 +45,8 @@ const store = new Vuex.Store({
     'NEST_ORDER_IN_STOP'(state,ords){
       for(var ord in ords){
         console.log(ord)
+        console.log(ords[ord])
+
         //state.stops[ord]['ScheduledOrder']=ords[ord]
       }
     },
@@ -95,16 +97,19 @@ const store = new Vuex.Store({
   },
   
   actions: {
-    // addStop ({commit},store, stop) {
+    addStop ({commit},store, stop) {
 
-    //   axios.post(endpoint+'/stops',stop)
-    //   .then(_ => {commit('ADD_STOP', stop)
-    //   })
-    //   .then(response => {})
-    //   .catch(e => {
+      axios.post(endpoint+'/stops',stop)
+      .then(_ => {commit('ADD_STOP', stop)
+      })
+      .then(response => {return response})
+      .catch(e => {
     
-    //   })
-    // },
+      })
+    },
+    addDonor({commit},donor){
+      axios.post(endpoint+'/donors',donor).then(_ => {console.log(_);commit("ADD_DONOR",donor)}).then(response => {return response}).catch(e => {console.log(e)})
+    },
     changeSelTrip({commit},sel){
       commit('UPDATE_SEL_TRIP',sel)
     },
@@ -223,6 +228,7 @@ const store = new Vuex.Store({
     }
   )},
   nestOrders({commit},orderlist){
+    console.log('test')
     commit('NEST_ORDER_IN_STOP',orderlist)
   },
   updateStopList({commit},stoplist){

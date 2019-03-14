@@ -21,20 +21,31 @@
     -->
     
     <div class="tripcontent">
+      
+      <!--
       <draggable :list="trip" :move="toggleFilled" >
-    
+      -->
+
       <stop-card :stopid="stop.id" v-for="(stop,s) in stops" :key="stop.id"/>
-        <div v-for="slot in triplen-stops.length" :key="slot.id" class="tripgrid">
-          <div  v-bind:id="slot" class="tripslot empty" @dblclick="slotdbl" @click.shift="toggleFilled" >
-            <div class="slotcontents"/>
+      <div class="tripgrid">
+        <div   class="tripslot empty" @dblclick="slotdbl" @click.shift="toggleFilled" >
+        <div class="slotcontents">
+          +
           </div>
         </div>
+      </div>
+      
+      <!--
       <button>+</button>
       </draggable>
+      -->
+
     </div>
-    <map-module :waypoints="waypoints" @ordered="orderstops" :tripid="trip['id']" class="tripmap"/>
-    <div class="tripbtns">
-      <input type="button" value="Save Trip Order" class="savebtn">
+    <div class="tripcontrol">
+      <map-module :waypoints="waypoints" @ordered="orderstops" :tripid="trip['id']" class="tripmap"/>
+      <div class="tripbtns">
+        <input type="button" value="Save Trip Order" class="savebtn">
+      </div>
     </div>
 </div>
 </template>
@@ -148,13 +159,21 @@ trucks:{get:function(){return this.$store.state.trucks}}
     },
     
     slotdbl:function(evt){ 
-      this.$emit("slotdbl",evt.target.id)
+      this.$emit("slotdbl",this.trip.id)
     },
   }
 }
 </script>
 
 <style scoped>
+.slotcontents{
+text-align:center;
+
+  justify-self: center;
+  color:white;
+  font-size:30px;
+  user-select:none;
+}
 .tripbtns{
   grid-area:btns;
 }
@@ -163,7 +182,7 @@ trucks:{get:function(){return this.$store.state.trucks}}
   height:50px;
   border:4px solid black;
   margin:10px;
-  display:inline-block;
+  display:inline-grid;
   border-radius:5px;
 }
 .empty{
@@ -182,7 +201,7 @@ trucks:{get:function(){return this.$store.state.trucks}}
 }
 .triptruck{
   grid-area:truck;}
-.tripmap{
+.tripcontrol{
   grid-area:map;
 }
 .tripgrid{
@@ -193,7 +212,7 @@ trucks:{get:function(){return this.$store.state.trucks}}
 .tripcontent{
   display:grid;
   grid-area:stops;
-  grid-template-columns:1fr 1fr;}
+  grid-template-columns:1fr;}
 .trip{
   background-color:#eeeeee;
   width:1000px;
@@ -201,7 +220,7 @@ trucks:{get:function(){return this.$store.state.trucks}}
   border-radius:20px;
   display:grid;
   grid-template-areas:"lbl lbl lbl"
-                      "truck . ."
+                      "truck map map"
                       "stops map map"
                       "stops map map"
                       "stops map map"

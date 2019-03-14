@@ -124,6 +124,7 @@ export default {
 <style scoped>
 .order{
   font-size:30px;
+  color:black;
 }
 .card{
 background-color:#dddddd;

@@ -6,7 +6,8 @@
     <button>▶</button>  
     <button >+</button>
   </div>
-  <trip-card  :trip="seltrip" @slotdbl="addStopWind"/>
+
+  <trip-card v-if="seltrip"  :trip="seltrip" @slotdbl="addStopWind"/>
 
    <div class="unassignedbin">
     <b>Unassigned Stops Bin</b>
@@ -27,19 +28,17 @@
       <button @click='showAbout'> About </button>
 
     <modal name="AddNewStop" :adaptive="true" height="auto" :scrollable="true" class="newstopwindow">
-    <div id="spacing">
-      <AddNewStop/>
-    </div>
+        <AddNewStop :trippos="modaltrip" @close="hidenewstop"/>
+      
     </modal>
-
     <modal name="ShowSettings" :adaptive="true" height="auto">
-    <div id="spacing">
+    <div class="spacing">
       <Settings/>
     </div>
     </modal>
 
     <modal name="aboutPage">
-    <div id="spacing">
+    <div class="spacing">
       Developed by:
         V
         <p/>
@@ -81,7 +80,8 @@ export default {
   },
 
   data () {
-    return {version:process.env.VUE_APP_VERSION}},
+    return {version:process.env.VUE_APP_VERSION,
+    modaltrip:null}},
   computed:{
     dragOptions(){return{animation:1,ghostClass:"ghost"}},//{group:'cards',handle:'.handle'}
     seltrip(){
@@ -117,11 +117,12 @@ export default {
     }
   },
   methods:{
-    
+    hidenewstop(){this.$modal.hide('AddNewStop')},
     testfn:function(evt){
     },
     addStopWind:function(pos){
-      this.$modal.show('AddNewStop',{pos:pos})
+      this.modaltrip=pos
+      this.$modal.show('AddNewStop')
 
     },
     commitStop:function(stop){
@@ -161,9 +162,10 @@ a {
   color: #42b983;
 }
 .newstopwindow{
-  
+    z-index: 1200;
+
 }
-#spacing{
+.spacing{
 padding:20px;
 border-radius:10px;
 }

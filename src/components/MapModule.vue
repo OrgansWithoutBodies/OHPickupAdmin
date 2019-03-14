@@ -32,7 +32,7 @@ export default{
 name:'mapmodule',
 props:{
 	tripid:{
-		type:Array,
+		type:Number,
 		required:false
 	},
 	waypoints:{
@@ -83,12 +83,12 @@ methods:{
 			}
 			this.$store.dispatch('minDist',coords).then(response => {
 				var pts=[];
-				const wy=response['waypts']
+				const wy=response['waypts']//ordered list of trip route stops
 				for (var pt in wy){
 					const o=wy[pt]['waypoint_index']
 					pts.push(o)
-					if(o>0){//o0 is store
-						this.waypoints[o-1]['ScheduledOrder']=pt
+					if(o>0){//o isn't thrift store
+						this.stops[o-1]['ScheduledOrder']=pt
 					}
 				};
 				var tripgeoms =[]
